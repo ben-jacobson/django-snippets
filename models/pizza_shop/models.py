@@ -28,39 +28,67 @@ class Topping(models.Model):
 
 class Pizza(models.Model):
     name_on_menu = models.CharField(max_length=75, primary_key=True)
-    labour_cost_to_make = models.IntegerField()
+    labour_cost_to_make_cents = models.IntegerField()
     margin_percent = models.IntegerField()
+    
+    BASES = (  ## Base types
+        ('THIN', 'Thin and Crispy'),
+        ('DEEP', 'Deep Pan'),
+        ('STUFFED', 'Stuffed Crust'),
+    )
+    
+    BASE_COSTS = { # costs of bases
+        'THIN': 100, 
+        'DEEP': 100,
+        'STUFFED': 250,
+    }    
+
+    BASE_WEIGHTS = {
+        'THIN': 150, 
+        'DEEP': 200,
+        'STUFFED': 300,        
+    }
+
+    base_type = models.CharField(max_length=30, choices=BASES, default='DEEP')
+    base_cost_cents = models.IntegerField(default=BASE_COSTS['DEEP'])    # cost of the pizza_base
+    base_weight_grams = models.IntegerField(default=BASE_WEIGHTS['DEEP'])    # cost of the pizza_base
+
     toppings = models.ManyToManyField(Topping)
 
+    def save(self, *args, **kwargs):
+        # Overwritten the save method, so that the base_cost_cents is populated automatically, based on the chosen base type
+        self.base_cost_cents = self.BASE_COSTS[self.base_type]
+        self.base_weight_grams = self.BASE_WEIGHTS[self.base_type]
+        super().save(*args, **kwargs)
+
     def get_price(self):
-        pass
+        # start with the pizza base cost
+        calculated_price = self.base_cost_cents       
+
+        # then add cost of toppings
+        for topping in self.toppings.all():
+            calculated_price += topping.portion_cost_cents
+
+        # then add labour cost
+        calculated_price += self.labour_cost_to_make_cents
+
+        # then add margin
+        calculated_price = calculated_price * (1 + self.margin_percent)
+
+        return calculated_price
 
     def get_weight(self):
-        pass
+        # start with the weight of the pizza_base
+        calculated_weight = self.base_weight_grams
+
+        # then add weight of toppings
+        for topping in self.toppings.all():
+            calculated_weight += topping.portion_weight_grams
+
+        return calculated_weight
 
     def __str__(self):
         return self.name_on_menu
 
     class Meta:
         ordering = ('name_on_menu',)
-
-
-
-# Chasing a bug all day, time to push this into the code
-
-'''
-from pizza_shop.models import Pizza, Topping
-from django.db.utils import IntegrityError
-
-t1 = Topping(ingredient_name='Cheese', portion_weight_grams=100, portion_cost_cents=50)
-t1.save()
-t2 = Topping(ingredient_name='Pepperoni', portion_weight_grams=100, portion_cost_cents=50)
-t2.save()
-
-p = Pizza(name_on_menu='Pepperoni Lovers', margin_percent=5, labour_cost_to_make=5)
-p.save()
-p.toppings.add(t1)
-p.toppings.add(t2)
-p.toppings.all()
-
-'''

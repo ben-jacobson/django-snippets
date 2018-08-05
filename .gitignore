@@ -5,8 +5,6 @@ models/pizza_shop/__pycache__/**
 models/models/__pycache__/**
 pizza_shop/__pycache__/**
 pizza_shop/migrations/__pycache__/**
-
-models/pizza_shop/migrations/__pycache__/
-models/pizza_shop/__pycache__/
 models/db.sqlite3
 models/pizza_shop/__pycache__/**
+models/db.sqlite3
