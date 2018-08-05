@@ -1,7 +1,7 @@
 from django.db import models
 
 class Topping(models.Model):
-    ingredient_name = models.CharField(max_length=50)
+    ingredient_name = models.CharField(max_length=50, unique=True, help_text="Ingredient")
 
     COLOUR_CHOICES = (
         ('BL', 'Black'),    # i.e olives
@@ -14,11 +14,11 @@ class Topping(models.Model):
         ('RE', 'Red'),      # Capsicum, Sauce, Pepperoni 
         ('BE', 'Blue'),     # What kind of topping would be blue?!                
     )
-    colour = models.CharField(max_length=2, choices=COLOUR_CHOICES)
+    colour = models.CharField(max_length=2, choices=COLOUR_CHOICES, help_text="Colour")
 
     # when applying a topping to a pizza, you grab a handful and ideally it should weight this much, and therefore cost can be determined too
-    portion_weight_grams = models.IntegerField()
-    portion_cost_cents = models.IntegerField()    
+    portion_weight_grams = models.IntegerField(help_text="Portion weight in grams")
+    portion_cost_cents = models.IntegerField(help_text="Portion cost in cents")    
 
     def __str__(self):
         return self.ingredient_name    
@@ -27,9 +27,9 @@ class Topping(models.Model):
         ordering = ('ingredient_name',)        
 
 class Pizza(models.Model):
-    name_on_menu = models.CharField(max_length=75, primary_key=True)
-    labour_cost_to_make_cents = models.IntegerField()
-    margin_percent = models.IntegerField()
+    name_on_menu = models.CharField(max_length=75, primary_key=True, help_text="Name")
+    labour_cost_to_make_cents = models.IntegerField(help_text="Cost of labour in cents")
+    margin_percent = models.IntegerField(help_text="Margin Percentage")
     
     BASES = (  ## Base types
         ('THIN', 'Thin and Crispy'),
@@ -49,11 +49,11 @@ class Pizza(models.Model):
         'STUFFED': 300,        
     }
 
-    base_type = models.CharField(max_length=30, choices=BASES, default='DEEP')
-    base_cost_cents = models.IntegerField(default=BASE_COSTS['DEEP'])    # cost of the pizza_base
-    base_weight_grams = models.IntegerField(default=BASE_WEIGHTS['DEEP'])    # cost of the pizza_base
+    base_type = models.CharField(max_length=30, choices=BASES, default='DEEP', help_text="Type of pizza base to use")
+    base_cost_cents = models.IntegerField(default=BASE_COSTS['DEEP'], help_text="Pizza base cost in cents")    # cost of the pizza_base
+    base_weight_grams = models.IntegerField(default=BASE_WEIGHTS['DEEP'], help_text="Pizza base weight in grams")    # cost of the pizza_base
 
-    toppings = models.ManyToManyField(Topping)
+    toppings = models.ManyToManyField(Topping, help_text="Toppings on this pizza")
 
     def save(self, *args, **kwargs):
         # Overwritten the save method, so that the base_cost_cents is populated automatically, based on the chosen base type
