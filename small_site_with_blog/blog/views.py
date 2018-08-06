@@ -1,7 +1,9 @@
 from django.shortcuts import render
 from django.http import HttpResponse
 
-# Create your views here.
+def home_page(request):
+    return HttpResponse("home page")
+
 def list_of_blog_posts(request):
     return HttpResponse("list of blog posts")
 
