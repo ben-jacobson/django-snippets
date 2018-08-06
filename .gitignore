@@ -9,3 +9,4 @@ pizza_shop_models/.vscode
 small_site_with_blog/blog/__pycache__
 small_site_with_blog/blog/tests/__pycache__
 small_site_with_blog/small_site_with_blog/__pycache__
+small_site_with_blog/db.sqlite3
