@@ -12,3 +12,4 @@ small_site_with_blog/small_site_with_blog/__pycache__
 small_site_with_blog/db.sqlite3
 small_site_with_blog/functional_tests/__pycache__/**
 small_site_with_blog/functional_tests/migrations/__pycache__/**
+geckodriver.log
