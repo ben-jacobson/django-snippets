@@ -1,5 +1,4 @@
 from django.test import TestCase
-#from blog.views import home_page, list_of_blog_posts, blog_entry
 from .test_models import create_test_author, create_test_blog_entry
 
 class BlogViewTests(TestCase):

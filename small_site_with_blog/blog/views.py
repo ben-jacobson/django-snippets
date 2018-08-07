@@ -8,5 +8,5 @@ def list_of_blog_posts(request):
     blog_post_list = Entry.objects.all()
     return render(request, 'blog_entries.html', {'blog_post_list': blog_post_list})
 
-def blog_entry(request, blog_id):
+def blog_post(request, blog_id):
     return render(request, 'blog_post.html')
