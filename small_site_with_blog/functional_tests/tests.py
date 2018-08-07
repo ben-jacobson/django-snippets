@@ -1,6 +1,8 @@
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 from selenium import webdriver
 
+#from time import sleep
+
 MAX_WAIT = 10 # 10 second max wait
 
 class FunctionalTest(StaticLiveServerTestCase):
@@ -16,18 +18,11 @@ class FunctionalTest(StaticLiveServerTestCase):
 
 class LayoutAndStylingTest(FunctionalTest):
     def test_layout_and_styling(self):
-        '''# User goes to the site
-        self.browser.get(self.base_url)
-        self.browser.set_window_size(1024, 768)
-        
-        blog_link = self.browser.find_element_by_link_text('Blog')
+        # For now, this snippet won't include any CSS. So we'll simply assert that the correct title is in use. Replace this
 
-        self.assertAlmostEqual(
-            blog_link.location['x'] + (blog_link.size['width'] / 2),
-            512,
-            delta=10
-        )'''
-        self.fail("functional test to be complete")
+        # User goes to the site
+        self.browser.get(self.base_url)
+        self.assertEqual('Simple site with a blog post', self.browser.title)    
    
 class ViewBlogPostTest(FunctionalTest):  
     def test_visit_blog_from_home_page(self):
@@ -39,14 +34,23 @@ class ViewBlogPostTest(FunctionalTest):
         self.assertIn("Spam", [row.text for row in blog_entries])
         self.assertIn("Clickbait", [row.text for row in blog_entries])
 
+    def test_visit_blog_entry_from_list(self):
+        # User visits the blog post list
+
+        # selects the first post from the list and clicks it
+
+        # checks that we are redirected to the correct page, and response code is correct
+
+        self.fail("functional test to be complete")        
 
     def test_post_is_accessible_directly_from_url(self):
         # User is sent a link url and goes directly to it, a page appears
+        self.browser.get('http://localhost:8000/blog/1/')
 
-        self.fail("functional test to be complete")
-
-    def test_blog_post_list_only_shows_published_entries(self):
-        self.fail("functional test to be complete")                 
+        # Users notices that the <h1> title of the blog post and the page <title> is the same
+        page_header = self.browser.find_element_by_tag_name('h1').text
+        page_title = self.browser.title
+        self.assertEqual(page_header, page_title)
 
 class BlogPostingTest(FunctionalTest):
     def test_can_post_blog(self):

@@ -1,5 +1,9 @@
 {% extends 'base.html' %}
 
-{% block page-title %}Blog Post Title{% endblock %}
+{% block page-title %}{{ blog_content.title }}{% endblock %}
 
-{% block main-content %}Blog Entry Content Here{% endblock %}
+{% block main-content %}
+    <h1 style='font-size:20px;'>{{ blog_content.title }}</h1>
+    <div class='blog-author'><p>Author: {{ blog_content.author.name }}</p></div>
+    <div class='blog-content'>{{ blog_content.html_content }}</div>
+{% endblock %}
