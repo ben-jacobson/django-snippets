@@ -1,5 +1,5 @@
 from django.test import TestCase
-from .test_models import create_test_author, create_test_blog_entry
+from .base import create_test_author, create_test_blog_entry
 
 class BlogViewTests(TestCase):
     def setUp(self):
@@ -15,7 +15,7 @@ class BlogViewTests(TestCase):
         create_test_blog_entry(title=self.test_post_title_one, author=test_author).publish()
         create_test_blog_entry(title=self.test_post_title_two, author=test_author).publish()
         create_test_blog_entry(title=self.test_post_title_unpublished, author=test_author)
-    
+
     # no need to alter tearDown function yet, default one is fine for now.         
 
     def test_home_uses_correct_template(self):
@@ -35,14 +35,4 @@ class BlogViewTests(TestCase):
         self.assertContains(response, self.test_post_title_one)
         self.assertContains(response, self.test_post_title_two)   
         self.assertNotContains(response, self.test_post_title_unpublished)
-        
-    def test_blog_post_publish_view_redirects(self):
-        self.fail("unfinished test")
-
-    def test_blog_post_publish_shows_in_list(self):
-        self.fail("unfinished test") 
-
-    def test_post_public_redirects(self):
-        self.fail("unfinished test")
-
 

@@ -4,7 +4,7 @@
 
 {% block main-content %}
     <p>List of blog post entries</p>
-    <ul>
+    <ul id="blog_entries">
         {% for post in blog_post_list.all %}
             <li><a href="#">{{ post.title }}</a></li>
         {% endfor %}

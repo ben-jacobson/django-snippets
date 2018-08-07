@@ -1,6 +1,5 @@
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 from selenium import webdriver
-from blog.tests.test_models import create_test_author, create_test_blog_entry
 
 MAX_WAIT = 10 # 10 second max wait
 
@@ -9,16 +8,7 @@ class FunctionalTest(StaticLiveServerTestCase):
         self.browser = webdriver.Firefox()
         self.browser.implicitly_wait(MAX_WAIT)
         self.browser.set_page_load_timeout(MAX_WAIT)
-
         self.base_url = 'http://localhost:8000' 
-
-        # set up method is run for each test, for the sake of all tests, we will have 2 blog posts created for functional testing. This code will just create as part of the model
-        self.test_post_one_title = 'functional test one'
-        self.test_post_two_title = 'functional test two'
-
-        author = create_test_author()
-        create_test_blog_entry(author=author, title=self.test_post_one_title)
-        create_test_blog_entry(author=author, title=self.test_post_two_title)
         
     def tearDown(self):
         self.browser.quit()
@@ -37,7 +27,7 @@ class LayoutAndStylingTest(FunctionalTest):
             512,
             delta=10
         )'''
-        self.fail("Test to be completed")
+        self.fail("functional test to be complete")
    
 class ViewBlogPostTest(FunctionalTest):  
     def test_visit_blog_from_home_page(self):
@@ -45,9 +35,10 @@ class ViewBlogPostTest(FunctionalTest):
         self.browser.get(self.base_url)
         self.browser.find_element_by_link_text('Blog').click()
 
-        blog_entries = self.browser.find_elements_by_css_selector('#blog_entries tr')
-        self.assertIn(self.test_post_one_title, [row.text for row in blog_entries])
-        self.assertIn(self.test_post_two_title, [row.text for row in blog_entries])
+        blog_entries = self.browser.find_elements_by_css_selector('#blog_entries li')
+        self.assertIn("Spam", [row.text for row in blog_entries])
+        self.assertIn("Clickbait", [row.text for row in blog_entries])
+
 
     def test_post_is_accessible_directly_from_url(self):
         # User is sent a link url and goes directly to it, a page appears
