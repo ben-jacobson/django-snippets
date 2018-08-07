@@ -1,0 +1,3 @@
+Todo list
+
+- In blog/test_views.py, and functional_tests/tests.py the tests make use of create_test_author, and create_test_blog_post functions from test_models.py. move these to a more neutral space and import from there. Refactor

@@ -1,11 +1,21 @@
 from django.test import TestCase
 #from blog.views import home_page, list_of_blog_posts, blog_entry
-from test_models import create_test_author, create_test_blog_entry
-
+from .test_models import create_test_author, create_test_blog_entry
 
 class BlogViewTests(TestCase):
-    def setUp():
+    def setUp(self):
         # All tests require that we have two test blog posts available.
+        test_author = create_test_author()
+
+        # establish some test post titles
+        self.test_post_title_one = "test post one"
+        self.test_post_title_two = "test post two"
+        self.test_post_title_unpublished = "we won't publish this one"
+
+        # create some test posts for upcoming tests
+        create_test_blog_entry(title=self.test_post_title_one, author=test_author).publish()
+        create_test_blog_entry(title=self.test_post_title_two, author=test_author).publish()
+        create_test_blog_entry(title=self.test_post_title_unpublished, author=test_author)
     
     # no need to alter tearDown function yet, default one is fine for now.         
 
@@ -23,14 +33,10 @@ class BlogViewTests(TestCase):
 
     def test_blog_post_list_only_shows_published_entries(self):
         response = self.client.get('/blog/')
-
-        self.fail("unfinished test")
-        # next in line to be completed
-
-        # to do after test completion, move create_test_author, create_test_blog_entry into a base.py file
-        # also move the setUp function to this, so that for all test_views and test_models have the necessary test entries created
-
-
+        self.assertContains(response, self.test_post_title_one)
+        self.assertContains(response, self.test_post_title_two)   
+        self.assertNotContains(response, self.test_post_title_unpublished)
+        
     def test_blog_post_publish_view_redirects(self):
         self.fail("unfinished test")
 
