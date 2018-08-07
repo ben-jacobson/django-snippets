@@ -1,11 +1,11 @@
 from django.contrib import admin
 from django.urls import path
-
-from blog import views
+from django.conf.urls import include
+from blog import urls as blog_urls
+from blog.views import home_page
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', views.home_page, name="home_page"),
-    path('blog/', views.list_of_blog_posts, name="list_of_blog_posts"),
-    path('blog/<int:blog_id>/', views.blog_entry, name="list_of_blog_posts"),
+    path('', home_page, name="home_page"),
+    path('blog/', include(blog_urls)),   
 ]

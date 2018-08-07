@@ -10,40 +10,45 @@ class FunctionalTest(StaticLiveServerTestCase):
         self.browser.implicitly_wait(MAX_WAIT)
         self.browser.set_page_load_timeout(MAX_WAIT)
 
+        self.base_url = 'http://localhost:8000' 
+
         # set up method is run for each test, for the sake of all tests, we will have 2 blog posts created for functional testing. This code will just create as part of the model
+        self.test_post_one_title = 'functional test one'
+        self.test_post_two_title = 'functional test two'
+
         author = create_test_author()
-        create_test_blog_entry(author=author, title="functional test one")
-        create_test_blog_entry(author=author, title="functional test two")
+        create_test_blog_entry(author=author, title=self.test_post_one_title)
+        create_test_blog_entry(author=author, title=self.test_post_two_title)
         
     def tearDown(self):
         self.browser.quit()
         super().tearDown()
 
 class LayoutAndStylingTest(FunctionalTest):
-    def test_home_page_correct_layout(self):
-        # User goes to the site
+    def test_layout_and_styling(self):
+        '''# User goes to the site
+        self.browser.get(self.base_url)
+        self.browser.set_window_size(1024, 768)
         
-        # and notices that the page has a link to a blog
+        blog_link = self.browser.find_element_by_link_text('Blog')
 
-        self.fail("functional test to be complete")
-
-    def test_blog_post_listings_page_has_correct_layout(self):
-        # User goes to the site and clicks on the blog link
-
-        # and notices that there are is a header "Blog Posts"
-
-        self.fail("functional test to be complete")
-
-    def test_blog_post_has_correct_layout(self):
-        # User goes to the blog post list page
-
-        # And clicks the first blog post in the list called "Test Blog"
-
-        # The user clicks it and finds that the title of the page is "Test Blog"
-
-        self.fail("functional test to be complete")             
+        self.assertAlmostEqual(
+            blog_link.location['x'] + (blog_link.size['width'] / 2),
+            512,
+            delta=10
+        )'''
+        self.fail("Test to be completed")
    
-class ViewBlogPostTest(FunctionalTest):    
+class ViewBlogPostTest(FunctionalTest):  
+    def test_visit_blog_from_home_page(self):
+        # User goes to home page, and clicks blog post
+        self.browser.get(self.base_url)
+        self.browser.find_element_by_link_text('Blog').click()
+
+        blog_entries = self.browser.find_elements_by_css_selector('#blog_entries tr')
+        self.assertIn(self.test_post_one_title, [row.text for row in blog_entries])
+        self.assertIn(self.test_post_two_title, [row.text for row in blog_entries])
+
     def test_post_is_accessible_directly_from_url(self):
         # User is sent a link url and goes directly to it, a page appears
 
