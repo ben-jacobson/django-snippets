@@ -1,6 +1,11 @@
 from django.test import TestCase
+from .base import create_test_author, create_test_blog_entry
 
 class BlogViewTests(TestCase):
+    def setUp(self):
+        test_author = create_test_author()
+        create_test_blog_entry(author=test_author)
+
     def test_home_uses_correct_template(self):
         response = self.client.get('/')
         self.assertTemplateUsed(response, 'home.html')

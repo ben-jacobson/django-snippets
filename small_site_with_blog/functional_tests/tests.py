@@ -5,6 +5,8 @@ from datetime import date
 from django.contrib.auth import get_user_model
 from blog.tests.base import create_test_author, create_test_blog_entry
 
+#from time import sleep
+
 MAX_WAIT = 10 # 10 second max wait
 
 class FunctionalTest(StaticLiveServerTestCase):
@@ -19,9 +21,12 @@ class FunctionalTest(StaticLiveServerTestCase):
         test_author = create_test_author(name=self.test_author_name, email=self.test_email)        
         
         # We'll also need 3 test posts, 2 published, 1 unpublished
-        create_test_blog_entry(title="Spam", author=test_author).publish() # publish
-        create_test_blog_entry(title="Clickbait", author=test_author).publish()
-        create_test_blog_entry(title="Unpublished", author=test_author) # No publish
+        test_post_one = create_test_blog_entry(title="Spam", author=test_author)
+        test_post_one.publish()
+        test_post_two = create_test_blog_entry(title="Clickbait", author=test_author)
+        test_post_two.publish()
+        create_test_blog_entry(title="Unpublished", author=test_author)
+        # don't publish the last one
 
     def tearDown(self):
         self.browser.quit()
@@ -44,35 +49,25 @@ class ViewBlogPostTest(FunctionalTest):
         blog_entries = self.browser.find_elements_by_css_selector('#blog_entries li')
         self.assertIn("Spam", [row.text for row in blog_entries])
         self.assertIn("Clickbait", [row.text for row in blog_entries])
+        self.assertNotIn("Unpublished", [row.text for row in blog_entries])
 
     def test_visit_blog_entry_from_list(self):
         # User visits the blog post list
+        self.browser.get(self.live_server_url + '/blog/')
 
         # selects the first post from the list and clicks it
+        blog_link = self.browser.find_element_by_class_name('blog_post')
+        blog_title = blog_link.text
+        blog_link.click()
 
-        # checks that we are redirected to the correct page, and response code is correct
-        self.fail("Complete this test")
-
-    def test_post_is_accessible_directly_from_url(self):
-        # User is sent a link url and goes directly to it, a page appears
-        self.browser.get(self.live_server_url + '/blog/1/')
-
-        # Users notices that the <h1> title of the blog post and the page <title> is the same
-        page_header = self.browser.find_element_by_tag_name('h1').text
-        page_title = self.browser.title
-        self.assertEqual(page_header, page_title)
-
-    def test_blog_post_list_only_shows_published_entries(self):
-        self.fail("Complete this test")
-
-    def test_blog_post_only_shows_if_published(self):
-        self.fail("Complete this test")
+        # check that the page title is correct
+        self.assertIn(blog_title, self.browser.find_element_by_tag_name('h1').text)
     
     def test_blog_post_shows_error_message_if_not_published(self):
-        self.fail("Complete this test")        
+        self.fail("Complete this test")      
 
 class BlogPostingTest(FunctionalTest):
-    def test_can_post_blog(self):
+    def test_can_post_blog_using_admin_page(self):
         # Because we are using LiveServerTestCase, it won't have the super user already set, we'll need to set this.
         admin_page_user = 'admin'
         admin_page_pass = 'blogpost'

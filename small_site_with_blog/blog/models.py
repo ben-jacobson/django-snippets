@@ -26,8 +26,9 @@ class Entry(models.Model):
     def __str__(self):
         return self.title
 
-    def publish(self):
+    def publish(self, *args, **kwargs):
         self.date_published = datetime.today()
+        super().save(*args, **kwargs)
     
     def save(self, *args, **kwargs):
         # overwrite the default save function, so as to automatically populate the date_created field.

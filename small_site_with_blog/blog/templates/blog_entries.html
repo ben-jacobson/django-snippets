@@ -6,7 +6,7 @@
     <p>List of blog post entries</p>
     <ul id="blog_entries">
         {% for post in blog_post_list.all %}
-            <li><a href="#">{{ post.title }}</a></li>
+            <li><a class='blog_post' href='/blog/{{ post.id }}'>{{ post.title }}</a></li>
         {% endfor %}
     </ul>
 {% endblock %}
