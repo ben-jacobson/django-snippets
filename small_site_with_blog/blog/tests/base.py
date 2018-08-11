@@ -13,11 +13,10 @@ def create_test_author(name="Authy McAuthface", email="authy@mcauthface.com"):
     
 def create_test_blog_entry(author, title="default title"):
     test_post = Entry(
-        date_created = datetime.now(),
+        date_created = datetime.today(),
         author = author,
         title = title,
         html_content = "Don't read this..",
     )
     test_post.save()
-    # do not run the save method, since we may want to manually publish later. 
     return test_post
