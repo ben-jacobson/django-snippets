@@ -1,7 +1,5 @@
 from django.contrib import admin
 from .models import Author, Entry
-from django.conf.urls import url
-
 
 # you can override the default admin views like this, also need to modify blog/apps.py and small_site_with_blog/settings.py
 #class BlogAdminSite(admin.AdminSite):

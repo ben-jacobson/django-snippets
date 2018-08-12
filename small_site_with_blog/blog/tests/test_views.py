@@ -1,6 +1,8 @@
 from django.test import TestCase
 from .base import create_test_author, create_test_blog_entry
 
+from django.urls import reverse
+
 from datetime import timedelta
 from django.utils import timezone
 
@@ -15,25 +17,25 @@ class BlogViewTests(TestCase):
         create_test_blog_entry(author=test_author) # no publish               
 
     def test_home_uses_correct_template(self):
-        response = self.client.get('/')
+        response = self.client.get(reverse('home_page'))
         self.assertTemplateUsed(response, 'home.html')
 
     def test_list_of_blog_posts_uses_correct_template(self):
-        response = self.client.get('/blog/')
+        response = self.client.get(reverse('blog_entries'))
         self.assertTemplateUsed(response, 'blog_entries.html')
 
     def test_blog_entry_uses_correct_template(self):
-        response = self.client.get('/blog/1/')
+        response = self.client.get(reverse('blog_entries') + '1/')
         self.assertTemplateUsed(response, 'blog_post.html')
 
     def test_blog_post_response_404_if_published_later_date(self):
-        response = self.client.get('/blog/2/')        
+        response = self.client.get(reverse('blog_entries') + '2/')        
         self.assertEqual(response.status_code, 404)
 
     def test_blog_post_response_404_if_not_published(self):
-        response = self.client.get('/blog/3/')        
+        response = self.client.get(reverse('blog_entries') + '3/')        
         self.assertEqual(response.status_code, 404)
 
     def test_blog_post_reqponse_404_if_doesnt_exist(self):        
-        response = self.client.get('/blog/100/')        
+        response = self.client.get(reverse('blog_entries') + '100/')        
         self.assertEqual(response.status_code, 404)        
