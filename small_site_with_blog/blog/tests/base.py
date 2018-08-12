@@ -1,5 +1,6 @@
 from blog.models import Author, Entry
-from datetime import datetime
+from django.utils import timezone
+
 
 def create_test_author(name="Authy McAuthface", email="authy@mcauthface.com"):
     test_author = Author(
@@ -13,7 +14,7 @@ def create_test_author(name="Authy McAuthface", email="authy@mcauthface.com"):
     
 def create_test_blog_entry(author, title="default title"):
     test_post = Entry(
-        date_created = datetime.today(),
+        date_created = timezone.now(),
         author = author,
         title = title,
         html_content = "Don't read this..",

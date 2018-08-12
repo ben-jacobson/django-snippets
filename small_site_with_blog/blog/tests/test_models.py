@@ -2,7 +2,8 @@ from django.test import TestCase
 from blog.models import Entry#, Author
 from .base import create_test_author, create_test_blog_entry
 
-from datetime import datetime, timedelta
+from django.utils import timezone
+from datetime import timedelta
 
 class BlogModelTests(TestCase):
     def test_blog_publish_function(self):
@@ -18,10 +19,8 @@ class BlogModelTests(TestCase):
         self.assertIsNone(entry_.date_published)
 
         # test that the publish function works
-        now = datetime.today()
         entry_.publish() 
-        #self.assertEqual(now, entry_.date_published)
-        self.assertAlmostEqual(now, entry_.date_published, delta=timedelta(seconds=1))         # datetime.timedelta is really useful for this, you can even compare them down to the milliseconds and microseconds. change seconds= to microseconds= and see the difference between the two times.
+        self.assertAlmostEqual(timezone.now(), entry_.date_published, delta=timedelta(seconds=1))         # datetime.timedelta is really useful for this, you can even compare them down to the milliseconds and microseconds. change seconds= to microseconds= and see the difference between the two times.
 
     def test_blog_onetomany_relationship_with_author(self):
         # create an author

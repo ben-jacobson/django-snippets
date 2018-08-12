@@ -1,7 +1,6 @@
 from django.db import models
-from datetime import datetime
+from django.utils import timezone
 
-# Create your models here.
 class Author(models.Model):
     name = models.CharField(max_length=30, help_text="Author Name")  
     email = models.EmailField(unique=True, help_text="Email Address")
@@ -16,8 +15,8 @@ class Author(models.Model):
 
 class Entry(models.Model):
     id = models.AutoField(primary_key=True, unique=True)
-    date_published = models.DateField(null=True, blank=True, help_text="Date Published")
-    date_created = models.DateField(null=True, blank=True, help_text="Date Created")
+    date_published = models.DateTimeField(null=True, blank=True, help_text="Date Published")
+    date_created = models.DateTimeField(default=timezone.now, help_text="Date Created")
     # ManyToOne relationship, one entry can only have one author, however one author can have many entries
     author = models.ForeignKey(Author, on_delete=models.CASCADE)        # When the referenced object is deleted, also delete the objects that have references to it (When you remove a blog post for instance, you might want to delete comments as well).
     title = models.CharField(max_length=255, help_text="Blog Title", default="My Blog Post")  
@@ -27,12 +26,7 @@ class Entry(models.Model):
         return self.title
 
     def publish(self, *args, **kwargs):
-        self.date_published = datetime.today()
-        super().save(*args, **kwargs)
-    
-    def save(self, *args, **kwargs):
-        # overwrite the default save function, so as to automatically populate the date_created field.
-        self.date_created = datetime.today()
+        self.date_published = timezone.now()
         super().save(*args, **kwargs)
 
     class Meta:

@@ -1,3 +1,15 @@
 Todo list
 
-- In functional_tests.py, test_visit_blog_from_home_page relies on pre-created database entries, figure out a way to create some test data programmatically for this test, then flush afterwards
+- You can set up the date_published field to auto populate on default, without having to overwrite the save function. see this page and how they implemented it : https://tutorial.djangogirls.org/en/django_models/    
+    created_date = models.DateTimeField(
+            default=timezone.now)
+    published_date = models.DateTimeField(
+            blank=True, null=True)
+
+- Look into the possibility of refactoring your views so that they are class based
+
+- Write a functional test for a publish button in the admin site.
+
+- Write some view or model unit tests that check ordering
+
+- Refactor your views to use REVERSE lookups, that way if you change URL structuring, your tests will still pass

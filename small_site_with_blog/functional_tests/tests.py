@@ -62,9 +62,6 @@ class ViewBlogPostTest(FunctionalTest):
 
         # check that the page title is correct
         self.assertIn(blog_title, self.browser.find_element_by_tag_name('h1').text)
-    
-    def test_blog_post_shows_error_message_if_not_published(self):
-        self.fail("Complete this test")      
 
 class BlogPostingTest(FunctionalTest):
     def test_can_post_blog_using_admin_page(self):
@@ -89,9 +86,7 @@ class BlogPostingTest(FunctionalTest):
         self.browser.find_element_by_class_name('addlink').click()
 
         # Site owner drafts a new blog post and saves it
-        # starting with setting date drafted
-        todays_date = str(date.today())
-        self.browser.find_element_by_id('id_date_created').send_keys(todays_date)
+        #todays_date = str(date.today())
 
         # then selects the author from the drop down menu
         self.browser.find_element_by_id('id_author').send_keys(self.test_author_name)
