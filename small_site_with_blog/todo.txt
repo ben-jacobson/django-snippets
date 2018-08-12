@@ -1,6 +1,7 @@
 Todo list
 
 - Write a functional test for a publish button in the admin site.
+    - See https://docs.djangoproject.com/en/2.0/ref/contrib/admin/#admin-overriding-templates
 
 - Write some view or model unit tests that check ordering
 

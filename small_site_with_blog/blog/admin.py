@@ -1,8 +1,11 @@
 from django.contrib import admin
 from .models import Author, Entry
 
-admin.site.register(Author)
+# you can override the default admin views like this, also need to modify blog/apps.py and small_site_with_blog/settings.py
+#class BlogAdminSite(admin.AdminSite):
+#    pass
 
+admin.site.register(Author)
 #admin.site.register(Entry, EntryAdmin) # instead of using this, you can use the decorator @admin, as seen below
 
 @admin.register(Entry)
