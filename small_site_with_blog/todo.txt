@@ -1,10 +1,11 @@
 Todo list
 
-- Write a functional test for a publish button in the admin site.
-    - See https://docs.djangoproject.com/en/2.0/ref/contrib/admin/#admin-overriding-templates
-
 - Write some view or model unit tests that check ordering
 
 - Refactor your views to use REVERSE lookups, that way if you change URL structuring, your tests will still pass
 
 - Look into the possibility of refactoring your views so that they are class based
+
+- Write a functional test for a publish button in the admin site.
+    - See https://docs.djangoproject.com/en/2.0/ref/contrib/admin/#admin-overriding-templates
+
