@@ -111,10 +111,6 @@ class AdminPageTests(FunctionalTest):
         # site owner goes back to entries and finds the new blog post there waiting for him
         self.assertEqual(test_title, self.browser.find_element_by_link_text(test_title).text)
 
-    def test_publish_button_in_admin_page(self):
-        # "Unpublished"
-        self.fail("finish the test")
-
     def test_list_of_blog_entries_show_published_status(self):
         # Site owner goes to the admin page and logs in
         self.browser.get(self.live_server_url + '/admin')

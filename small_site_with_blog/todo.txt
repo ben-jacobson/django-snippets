@@ -2,8 +2,5 @@ Todo list
 
 - Write some view or model unit tests that check ordering
 
-- Continue refactoring views as class based, see blog post view, requires putting back in 404 error messsaging. see https://docs.djangoproject.com/en/2.1/topics/class-based-views/generic-display/
-
-- Write a functional test for a publish button in the admin site.
-    - See https://docs.djangoproject.com/en/2.0/ref/contrib/admin/#admin-overriding-templates
+- 3 of our tests are failing due to timing issues. The filter we're using in our views isn't working correctly. Resolve this
 
