@@ -8,6 +8,6 @@ from blog import views as blog_views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', blog_views.home_page, name="home_page"),
-    path('blog/', include(blog_urls)),   
+    path('', blog_views.home_page.as_view(), name="home_page"),
+    path('blog/', include(blog_urls)),
 ]
