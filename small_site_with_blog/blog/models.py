@@ -26,7 +26,7 @@ class Entry(models.Model):
         return self.title
 
     def publish(self, *args, **kwargs):
-        self.date_published = timezone.now()
+        self.date_published = timezone.localtime(timezone.now())
         super().save(*args, **kwargs)
 
     class Meta:

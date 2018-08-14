@@ -6,6 +6,8 @@ from django.contrib.auth import get_user_model
 from blog.tests.base import create_test_author, create_test_blog_entry
 
 from datetime import datetime
+from django.utils import timezone
+
 
 #from time import sleep
 
@@ -120,7 +122,7 @@ class AdminPageTests(FunctionalTest):
         self.browser.find_element_by_link_text('Entries').click()
 
         # build a date string to test that the published date and time appear, eg 'Aug. 12, 2018'
-        string_from_time = datetime.strftime(datetime.now(), "%b. %d, %Y")  # this may break, unsure if the zero padding on the day matches what the admin page displays. If in doubt, just change this to just ', %Y'
+        string_from_time = datetime.strftime(timezone.localtime(timezone.now()), "%b. %d, %Y")  # this may break, unsure if the zero padding on the day matches what the admin page displays. If in doubt, just change this to just ', %Y'
 
         # Site owner notices that there are 3 posts - 2 published, and 1 unpublished
         date_published_fields = self.browser.find_elements_by_class_name('field-date_published')
@@ -138,7 +140,7 @@ class AdminPageTests(FunctionalTest):
         self.browser.find_element_by_link_text('Entries').click()
 
         # build a date string to test that the published date and time appear, eg 'Aug. 12, 2018'
-        string_from_time = datetime.strftime(datetime.now(), "%b. %d, %Y")  # this may break, unsure if the zero padding on the day matches what the admin page displays. If in doubt, just change this to just ', %Y'
+        string_from_time = datetime.strftime(timezone.localtime(timezone.now()), "%b. %d, %Y")  # this may break, unsure if the zero padding on the day matches what the admin page displays. If in doubt, just change this to just ', %Y'
 
         # Site owner notices that there are 3 posts with date created listed on page
         date_published_fields = self.browser.find_elements_by_class_name('field-date_created')

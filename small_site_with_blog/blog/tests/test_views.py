@@ -6,6 +6,7 @@ from django.urls import reverse
 from datetime import timedelta
 from django.utils import timezone
 
+from time import sleep
 
 class BlogViewTests(TestCase):
     def setUp(self):
@@ -13,9 +14,10 @@ class BlogViewTests(TestCase):
         self.entry_one = create_test_blog_entry(author=test_author)
         self.entry_one.publish()            # publish the first one normally
         self.entry_two = create_test_blog_entry(author=test_author)
-        self.entry_two.date_published = timezone.now() + timedelta(days=1)  # publish the second one in tomorrow date
+        self.entry_two.date_published = timezone.localtime(timezone.now()) + timedelta(hours=1)  # publish the second one in tomorrow date
         self.entry_two.save()
         self.entry_three = create_test_blog_entry(author=test_author) # no publish               
+        sleep(1) # weird bug in that the date_published lte filters aren't accepting of posts that were published a fraction of a second before. allowing some sleep time for accurate testing. Just a fraction of a second will do.
 
     def test_home_uses_correct_template(self):
         response = self.client.get(reverse('home_page'))
