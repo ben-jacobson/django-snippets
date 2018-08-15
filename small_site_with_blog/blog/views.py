@@ -12,7 +12,7 @@ class home_page(View):
         return render(request, self.template_name)
 
 class list_of_blog_posts(ListView):
-    queryset = Entry.objects.all().filter(date_published__lte=timezone.localtime(timezone.now()))
+    queryset = Entry.objects.all().filter(date_published__lte=timezone.localtime(timezone.now())) 
     context_object_name = 'blog_post_list'
     template_name = 'blog_entries.html'
 
@@ -27,7 +27,7 @@ class blog_post(DetailView):
     template_name = 'blog_entries.html'
 
     def get(self, request):
-        context = {'blog_post_list': Entry.objects.all().filter(date_published__lte=timezone.localtime(timezone.now()))}
+        context = {'blog_post_list': Entry.objects.all().filter(date_published__lte=timezone.now())}
         return render(request, self.template_name, context)'''
 
 '''class blog_post(View):

@@ -16,7 +16,7 @@ class Author(models.Model):
 class Entry(models.Model):
     id = models.AutoField(primary_key=True, unique=True)
     date_published = models.DateTimeField(null=True, blank=True, help_text="Date Published")
-    date_created = models.DateTimeField(default=timezone.now, help_text="Date Created")
+    date_created = models.DateTimeField(default=timezone.now, help_text="Date Created") # do we need 'auto_now_add=True'?
     # ManyToOne relationship, one entry can only have one author, however one author can have many entries
     author = models.ForeignKey(Author, on_delete=models.CASCADE)        # When the referenced object is deleted, also delete the objects that have references to it (When you remove a blog post for instance, you might want to delete comments as well).
     title = models.CharField(max_length=255, help_text="Blog Title", default="My Blog Post")  
