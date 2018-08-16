@@ -14,7 +14,7 @@ def create_test_author(name="Authy McAuthface", email="authy@mcauthface.com"):
     
 def create_test_blog_entry(author, title="default title"):
     test_post = Entry(
-        date_created = timezone.localtime(timezone.localtime(timezone.now())),
+        date_created = timezone.localtime(timezone.localtime()),
         author = author,
         title = title,
         html_content = "Don't read this..",

@@ -20,7 +20,7 @@ class BlogModelTests(TestCase):
 
         # test that the publish function works
         entry_.publish() 
-        self.assertAlmostEqual(timezone.localtime(timezone.localtime(timezone.now())), entry_.date_published, delta=timedelta(seconds=1))         # datetime.timedelta is really useful for this, you can even compare them down to the milliseconds and microseconds. change seconds= to microseconds= and see the difference between the two times.
+        self.assertAlmostEqual(timezone.localtime(timezone.localtime()), entry_.date_published, delta=timedelta(seconds=1))         # datetime.timedelta is really useful for this, you can even compare them down to the milliseconds and microseconds. change seconds= to microseconds= and see the difference between the two times.
 
     def test_blog_onetomany_relationship_with_author(self):
         # create an author
