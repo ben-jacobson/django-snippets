@@ -30,7 +30,7 @@ class Entry(models.Model):
         super().save(*args, **kwargs)
 
     class Meta:
-        ordering = ('date_published',)
+        ordering = ('-date_published',)     # we want to see most recent published entries on top
         verbose_name_plural = "Entries"
 
  

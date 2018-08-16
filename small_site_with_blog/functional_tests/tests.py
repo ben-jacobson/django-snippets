@@ -127,9 +127,10 @@ class AdminPageTests(FunctionalTest):
         # Site owner notices that there are 3 posts - 2 published, and 1 unpublished
         date_published_fields = self.browser.find_elements_by_class_name('field-date_published')
         self.assertEqual(3, len(date_published_fields))
-        self.assertEqual(date_published_fields[0].text, '-')
+        self.assertIn(string_from_time, date_published_fields[0].text)
         self.assertIn(string_from_time, date_published_fields[1].text)
-        self.assertIn(string_from_time, date_published_fields[2].text)
+        self.assertEqual(date_published_fields[2].text, '-') # a dash appears next to unpublished posts
+
 
     def test_list_of_blog_entries_show_date_created(self):
         # Site owner goes to the admin page and logs in

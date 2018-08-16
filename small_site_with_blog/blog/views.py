@@ -5,7 +5,7 @@ from django.utils import timezone
 from django.views import View
 from django.views.generic import ListView, DetailView
 
-from django.http import Http404
+#from django.http import Http404
 
 class home_page(View):
     template_name = 'home.html'

@@ -37,3 +37,25 @@ class BlogModelTests(TestCase):
         self.assertEqual(len(entries_by_author), 2)
         self.assertEqual(entries_by_author[0].author, author_)
         self.assertEqual(entries_by_author[1].author, author_)
+
+    def test_blog_ordering(self):
+        author_ = create_test_author()
+        entry_one = create_test_blog_entry(title="post one", author = author_)
+        entry_two = create_test_blog_entry(title="post two", author = author_)
+        entry_three = create_test_blog_entry(title="post three", author = author_)
+        entry_one.publish()
+        entry_two.publish()
+        entry_three.publish()
+
+        entries = Entry.objects.all().filter(date_published__lte=timezone.localtime())  # only get published entries, since date_pubished is how it is ordered
+        self.assertEqual(len(entries), 3)
+
+        # Entries should be ordered the most recent date_published first, through to least recent
+        entry_titles_in_correct_order = ['post three', 'post two', 'post one']
+        entry_titles_of_test_posts = []
+
+        for e in entries:
+            entry_titles_of_test_posts.append(e.title)
+
+        self.assertEqual(entry_titles_in_correct_order, entry_titles_of_test_posts)
+

@@ -1,6 +1,3 @@
 Todo list
 
 - Write some view or model unit tests that check ordering
-
-- 3 of our tests are failing due to timing issues. The filter we're using in our views isn't working correctly. Resolve this
-
