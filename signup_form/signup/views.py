@@ -1,3 +1,6 @@
 from django.shortcuts import render
+from .forms import CustomerForm
 
-# Create your views here.
+def home_page(request):
+    form = CustomerForm()
+    return render(request, 'home.html', {'form': form})

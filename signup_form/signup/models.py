@@ -1,36 +1,43 @@
 from django.db import models
+from .countries import COUNTRIES
 
 class Customer(models.Model):
-    SALUTATION_CHOICES = (
-        ('Master'),
-        ('Mr'),
-        ('Mrs'),
-        ('Ms'),
-        ('Miss'),
-        ('Dr'),
+    TITLE_CHOICES = (       # a sample size of 560K english speaking people living in the UK, finds that these 7 titles account for 99.6% of the population - https://www.codeproject.com/Questions/262876/Titles-or-Salutation-list 
+        ('MR', 'Mr'),
+        ('MRS', 'Mrs'),
+        ('MS', 'Ms'),
+        ('MISS', 'Miss'),
+        ('DR', 'Dr'),
+        ('PROF', 'Prof'),
+        ('REV', 'Rev'),
     )
     GENDER_CHOICES = (
         ('M', 'Male'),
         ('F', 'Female'),
     )
 
-    salutation = models.CharField(max_length=8, choices=SALUTATION_CHOICES, help_text="Salutation", blank=True) 
-    first_name = models.CharField(max_length=50, help_text="First Name")  
-    middle_name = models.CharField(max_length=50, help_text="Middle Name", blank=True)  
-    surname = models.CharField(max_length=50, help_text="Surname")  
+    title = models.CharField(max_length=4, choices=TITLE_CHOICES, blank=True) 
+    first_name = models.CharField(max_length=50)  
+    middle_name = models.CharField(max_length=50, blank=True)  
+    surname = models.CharField(max_length=50)  
 
-    gender = models.CharField(max_length=1, choices=GENDER_CHOICES, help_text="Gender")
-    dob = models.DateField(help_text="Date of Birth")
+    gender = models.CharField(max_length=1, choices=GENDER_CHOICES)
+    dob = models.DateField(verbose_name="Date of birth")
 
-    email = models.EmailField(unique=True, help_text="Email Address")
-    phone = models.BigIntegerField(help_text="Home Phone Number", blank=True)
-    mobile = models.BigIntegerField(help_text="Mobile Phone Number", blank=True)
+    '''email_error_messages = {
+        "blank": "This field cannot be empty",
+        "invalid": "Please enter a valid email address",
+        "unique": "We already have an account with that email address",
+    }''' # my error messages aren't really that unique, will see what Django's ones are and use those. For learning purposes, will leave this code commented out in case I want to use it in a future project
+    email = models.EmailField(unique=True)#, error_messages=email_error_messages)
+    phone = models.BigIntegerField(verbose_name="Home phone number", blank=True)
+    mobile = models.BigIntegerField(verbose_name="Mobile number", blank=True)
 
-    address_1 = models.CharField(max_length=120, help_text="Address Line 1") 
-    address_2 = models.CharField(max_length=120, help_text="Address Line 2", blank=True) 
-    city = models.CharField(max_length=50, help_text="City") 
-    state = models.CharField(max_length=50, help_text="State")
-    country = models.CharField(max_length=50, help_text="Country")
+    address_1 = models.CharField(max_length=120) 
+    address_2 = models.CharField(max_length=120, blank=True) 
+    city = models.CharField(max_length=50) 
+    state = models.CharField(max_length=50)
+    country = models.CharField(max_length=2, choices=COUNTRIES, default="Australia")
 
     date_account_created = models.DateTimeField(auto_now_add=True, editable=False)
 
