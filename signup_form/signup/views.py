@@ -16,9 +16,12 @@ class home_page(FormView):
         if form.is_valid():
             form.save() # this takes all data from the form and creates a new database object from it. This also automatically cleans/santizes the data 
             # At this stage, should redirect to a new page 
-            return HttpResponse(form)
+            return HttpResponse("Thanks for submitting")
         else:
-            return HttpResponse("Your form wasn't valid")
+            html_data = "There was an error in the form: <br /><br />"
+            for field in form.cleaned_data:
+                html_data += field + "<br />"
+            return HttpResponse(html_data)
 
 class view_customer_details(DetailView):
     def get(self, request, cust_email):
