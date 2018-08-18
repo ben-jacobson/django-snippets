@@ -4,4 +4,4 @@ from django.test import TestCase
 
 class smoketest(TestCase):
     def test_fail(self):
-        self.fail("testing")
+        self.fail("complete these tests")
