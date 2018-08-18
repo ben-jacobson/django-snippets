@@ -19,3 +19,4 @@ signup_form/db.sqlite3
 signup_form/signup/__pycache__/
 signup_form/signup/migrations/__pycache__/
 signup_form/signup/tests/__pycache__/
+signup_form/functional_tests/__pycache__/**
