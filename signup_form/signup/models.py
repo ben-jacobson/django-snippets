@@ -1,6 +1,8 @@
 from django.db import models
 from .countries import COUNTRIES
 
+#from django.utils import timezone
+
 class Customer(models.Model):
     TITLE_CHOICES = (       # a sample size of 560K english speaking people living in the UK, finds that these 7 titles account for 99.6% of the population - https://www.codeproject.com/Questions/262876/Titles-or-Salutation-list 
         ('MR', 'Mr'),

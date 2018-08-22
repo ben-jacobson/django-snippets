@@ -21,7 +21,7 @@ class FunctionalTest(StaticLiveServerTestCase):
         self.browser.find_element_by_id("id_middle_name").send_keys("Selenium")
         self.browser.find_element_by_id("id_surname").send_keys("McTesterson")
         self.browser.find_element_by_id("id_gender").send_keys("Male")
-        self.browser.find_element_by_id("id_dob").send_keys("31/08/2018")
+        self.browser.find_element_by_id("id_dob").send_keys("2018-08-31")
         self.browser.find_element_by_id("id_email").send_keys("tester@mctestersonandco.com")
         self.browser.find_element_by_id("id_phone").send_keys("6665468")
         self.browser.find_element_by_id("id_mobile").send_keys("7771243")

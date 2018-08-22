@@ -1,4 +1,4 @@
-#from django.shortcuts import render
+from django.shortcuts import render_to_response
 from .forms import CustomerForm
 
 from django.http import HttpResponse
@@ -15,13 +15,12 @@ class home_page(FormView):
 
         if form.is_valid():
             form.save() # this takes all data from the form and creates a new database object from it. This also automatically cleans/santizes the data 
-            # At this stage, should redirect to a new page 
-            return HttpResponse("Thanks for submitting")
+            html_output = "Submitted the following form: <br /><br />"
+            #for field in form.cleaned_data:    # form.cleaned_data is a python dictionary
+            #    html_data += field + "<br />"
+            return HttpResponse(html_output)
         else:
-            html_data = "There was an error in the form: <br /><br />"
-            for field in form.cleaned_data:
-                html_data += field + "<br />"
-            return HttpResponse(html_data)
+            return render_to_response(self.template_name, {'form': form})
 
 class view_customer_details(DetailView):
     def get(self, request, cust_email):
