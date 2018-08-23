@@ -34,7 +34,7 @@ class FunctionalTest(StaticLiveServerTestCase):
         self.browser.find_element_by_id("id_country").send_keys('Au')
 
 class FormTest(FunctionalTest):
-    def test_input_customer_data(self):
+    def test_input_customer_data_creates_database_entries(self):
         # user navigates to form page
         self.browser.get(self.live_server_url)
 
@@ -44,9 +44,11 @@ class FormTest(FunctionalTest):
         # the user then clicks the submit button
         self.browser.find_element_by_id("submit").click()
      
-        # check to see that the data is now in the database. TODO - figure out how to make this a model test somehow
+        # check to see that the data is now in the database.
         cust_data = Customer.objects.get(id=1)
         self.assertEqual(cust_data.first_name, TEST_FORM_DATA['first_name'])
         self.assertEqual(cust_data.middle_name, TEST_FORM_DATA['middle_name'])
         self.assertEqual(cust_data.surname, TEST_FORM_DATA['surname'])
 
+    def test_input_invalid_data_shows_errors(self):
+        self.fail('finish this test')

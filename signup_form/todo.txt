@@ -1,0 +1,6 @@
+Signup form unit/functional testing - todo list
+
+-Find out what a CreateView generic view does, can this be used for this customer sign up form?
+-Write a test that look at the validation errors in the form object's validation array. See test-driven-django-development unit testing forms web page
+-Put in some javascript to automatically raise validation errors, and functional tests for them
+-Refactor our functional tests so that instead of checking the database, it outputs the form content to a separate page, and we simply test the HTML output exists.
