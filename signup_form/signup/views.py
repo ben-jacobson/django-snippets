@@ -11,16 +11,20 @@ class home_page(FormView):
     form_class = CustomerForm
     
     def post(self, request):
-        form = CustomerForm(request.POST)
+        form_data = CustomerForm(request.POST)
 
-        if form.is_valid():
-            form.save() # this takes all data from the form and creates a new database object from it. This also automatically cleans/santizes the data 
+        # below is not something you'd have in a production environment. This is just to show how to get access to some of the data if ever necessary
+        if form_data.is_valid():
+            form_data.full_clean() # this method is not called prior to save, we need to manually call it prior to save()
+            form_data.save() # this takes all data from the form and creates a new database object from it. This also automatically cleans/santizes the data 
             html_output = "Submitted the following form: <br /><br />"
-            #for field in form.cleaned_data:    # form.cleaned_data is a python dictionary
-            #    html_data += field + "<br />"
+
+            for key in form_data.cleaned_data.keys():
+                html_output += f'{key}: {form_data.cleaned_data[key]}<br />'
+
             return HttpResponse(html_output)
         else:
-            return render_to_response(self.template_name, {'form': form})
+            return render_to_response(self.template_name, {'form': form_data})
 
 class view_customer_details(DetailView):
     def get(self, request, cust_email):

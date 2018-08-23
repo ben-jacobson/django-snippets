@@ -43,7 +43,7 @@ class Customer(models.Model):
 
     date_account_created = models.DateTimeField(auto_now_add=True, editable=False)
 
-    def __str__(self):  # returns hte name by default
+    def __str__(self):  # returns the name by default
         fullname = self.first_name + " " + self.middle_name + " " + self.surname
         return fullname
     
