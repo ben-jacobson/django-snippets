@@ -2,7 +2,7 @@ from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 from selenium import webdriver
 #from selenium.webdriver.common.keys import Keys
 
-from signup.models import Customer
+#from signup.models import Customer
 from signup.test_form_data import TEST_FORM_DATA
 
 MAX_WAIT = 10 # 10 second max wait
