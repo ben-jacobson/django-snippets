@@ -2,8 +2,6 @@ from django.db import models
 from .countries import COUNTRIES
 from django.urls import reverse
 
-#from django.utils import timezone
-
 class Customer(models.Model):
     TITLE_CHOICES = (       # a sample size of 560K english speaking people living in the UK, finds that these 7 titles account for 99.6% of the population - https://www.codeproject.com/Questions/262876/Titles-or-Salutation-list 
         ('MR', 'Mr'),
@@ -48,6 +46,10 @@ class Customer(models.Model):
         fullname = self.first_name + " " + self.middle_name + " " + self.surname
         return fullname
     
+    #def get_absolute_url(self):
+    #   pass
+    # get_absolute_url can be used in conjunction with generic views such as DetailView, to help the view output the models data to a template. Very efficient! 
+
     def get_success_url(self):
         return reverse('thanks_url', kwargs={'pk': self.pk})
 
