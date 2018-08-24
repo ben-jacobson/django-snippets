@@ -12,6 +12,19 @@ class FormTests(TestCase):
         first_test_form.full_clean()
         self.assertFalse(first_test_form.is_valid(), msg='form.is_valid() should return false since we skipped mandatory fields')
 
+        # you can check the various errors produced by the form with form.errors
+        self.assertEqual(first_test_form.errors, {
+            #'first_name': ['This field is required.'], # have already supplied a first name
+            'surname': ['This field is required.'],
+            'gender': ['This field is required.'],
+            'dob': ['This field is required.'],
+            'email': ['This field is required.'],
+            'address_1': ['This field is required.'],
+            'city': ['This field is required.'],
+            'state': ['This field is required.'],
+            'country': ['This field is required.'],            
+        })
+
         # second attempt is to ensure form validates when it should
         second_test_form = CustomerForm(data=TEST_FORM_DATA)
         second_test_form.full_clean()
@@ -25,7 +38,7 @@ class FormTests(TestCase):
         # check first that the form object contains the data. Save() creates a new object for us to test
         self.assertEqual(form_object_test.first_name, TEST_FORM_DATA['first_name'])
         self.assertEqual(form_object_test.middle_name, TEST_FORM_DATA['middle_name'])
-        self.assertEqual(form_object_test.surname, TEST_FORM_DATA['surname'])           
+        self.assertEqual(form_object_test.surname, TEST_FORM_DATA['surname'])         
 
         # then check that the date can be read from the database
         cust_data = Customer.objects.get(email=TEST_FORM_DATA['email'])
