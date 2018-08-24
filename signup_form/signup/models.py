@@ -1,5 +1,6 @@
 from django.db import models
 from .countries import COUNTRIES
+from django.urls import reverse
 
 #from django.utils import timezone
 
@@ -32,8 +33,8 @@ class Customer(models.Model):
         "unique": "We already have an account with that email address",
     }''' # my error messages aren't really that unique, will see what Django's ones are and use those. For learning purposes, will leave this code commented out in case I want to use it in a future project
     email = models.EmailField(unique=True)#, error_messages=email_error_messages)
-    phone = models.BigIntegerField(verbose_name="Home phone number", blank=True)
-    mobile = models.BigIntegerField(verbose_name="Mobile number", blank=True)
+    phone = models.BigIntegerField(verbose_name="Home phone number", blank=True, null=True)
+    mobile = models.BigIntegerField(verbose_name="Mobile number", blank=True, null=True)
 
     address_1 = models.CharField(max_length=120) 
     address_2 = models.CharField(max_length=120, blank=True) 
@@ -47,5 +48,8 @@ class Customer(models.Model):
         fullname = self.first_name + " " + self.middle_name + " " + self.surname
         return fullname
     
+    def get_success_url(self):
+        return reverse('thanks_url', kwargs={'pk': self.pk})
+
     class Meta:
         ordering = ('-date_account_created',) # newest to oldest

@@ -1,12 +1,30 @@
-from django.shortcuts import render_to_response
-from .forms import CustomerForm
+#from django.shortcuts import render_to_response
+#from .forms import CustomerForm
 
-from django.http import HttpResponse
+#from django.http import HttpResponse
 
-from django.views.generic.edit import FormView
+#from django.views.generic.edit import FormView
+from django.views.generic.edit import CreateView
 from django.views.generic import DetailView
 
-class home_page(FormView):
+from .models import Customer
+
+class home_page(CreateView):            # create view makes this easy since it will create the form for you. 
+    template_name = 'home.html'
+    model = Customer
+    fields = '__all__'
+
+    def get_success_url(self):
+        return self.object.get_success_url()        # self.object refers to the instance of self.model. in this case Customer
+
+class thanks(DetailView):
+    template_name = 'thanks.html'
+    model = Customer 
+    context_object_name = 'customer_data'
+
+
+
+'''class home_page(FormView):       # However if doing this manually, you'll need to use the FormView. Hint - this makes it easier to test because the unit tests can make copies of the form. 
     template_name = 'home.html'
     form_class = CustomerForm
     
@@ -24,8 +42,4 @@ class home_page(FormView):
 
             return HttpResponse(html_output)
         else:
-            return render_to_response(self.template_name, {'form': form_data})
-
-class view_customer_details(DetailView):
-    def get(self, request, cust_email):
-        pass
+            return render_to_response(self.template_name, {'form': form_data})'''

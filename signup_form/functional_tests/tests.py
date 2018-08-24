@@ -44,11 +44,10 @@ class FormTest(FunctionalTest):
         # the user then clicks the submit button
         self.browser.find_element_by_id("submit").click()
      
-        # check to see that the data is now in the database.
-        cust_data = Customer.objects.get(id=1)
-        self.assertEqual(cust_data.first_name, TEST_FORM_DATA['first_name'])
-        self.assertEqual(cust_data.middle_name, TEST_FORM_DATA['middle_name'])
-        self.assertEqual(cust_data.surname, TEST_FORM_DATA['surname'])
+        # check to see that the data is now visible on the page.  
+        test_full_name = TEST_FORM_DATA['first_name'] + " " + TEST_FORM_DATA['surname']
+        self.assertEqual(test_full_name, self.browser.find_element_by_id('customer-name').get_attribute("innerText"), msg='Name not appearing on /thanks/ page')
+        self.assertEqual(TEST_FORM_DATA['email'], self.browser.find_element_by_id('customer-email').get_attribute("innerText"), 'Email not appearing on /thanks/ page')
 
     def test_input_invalid_data_shows_errors(self):
         self.fail('finish this test')

@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+
+{% block page-title %}Thanks {{customer_data.first_name}} {{customer_data.surname}}{% endblock %}
+
+{% block main-content %}
+    <h1 style='font-size:20px;'>Customer Information</h1>
+    <p id='customer-name'>{{ customer_data.first_name }} {{customer_data.surname}}</p>
+    <p id='customer-email'>{{ customer_data.email }}</p>
+{% endblock %}
