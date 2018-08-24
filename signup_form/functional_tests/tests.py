@@ -50,4 +50,21 @@ class FormTest(FunctionalTest):
         self.assertEqual(TEST_FORM_DATA['email'], self.browser.find_element_by_id('customer-email').get_attribute("innerText"), 'Email not appearing on /thanks/ page')
 
     def test_input_invalid_data_shows_errors(self):
-        self.fail('finish this test')
+        # user navigates to form page
+        self.browser.get(self.live_server_url)
+
+        # data is entered into the form
+        self.input_test_data_into_customer_form()
+
+        # some of this data is entered incorrectly. 
+        dob_field = self.browser.find_element_by_id("id_dob")
+        dob_field.clear()
+        dob_field.send_keys('my birfday')
+        # we have a unit test that tests for duplicate emails, so we won't bother for the functional test. 
+
+        # the user then clicks the submit button
+        self.browser.find_element_by_id("submit").click()
+     
+        # since the data that was entered is invalid, some validation errors appear on screen. 
+        dob_error = self.browser.find_element_by_css_selector('ul.errorlist>li') # css selectors let you find child nodes with > symbol. you can nest as many as you'd like
+        self.assertEqual(dob_error.text, "Enter a valid date.") # interesting to note that using the .text will strip tags, therefore if you used a css selector ul.errorlist without specifying the >li, this test would still pass. 
