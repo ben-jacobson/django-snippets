@@ -3,8 +3,6 @@ from signup.models import Customer
 from signup.test_form_data import TEST_FORM_DATA
 from django.urls import reverse
 
-#from signup.forms import CustomerForm
-
 class FormViewTests(TestCase): 
 # when using CreateView, you'll only need two tests, one to post the formdata, the other to ensure it's reached the database
     

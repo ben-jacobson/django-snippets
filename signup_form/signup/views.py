@@ -22,8 +22,6 @@ class thanks(DetailView):
     model = Customer 
     context_object_name = 'customer_data'
 
-
-
 '''class home_page(FormView):       # However if doing this manually, you'll need to use the FormView. Hint - this makes it easier to test because the unit tests can make copies of the form. 
     template_name = 'home.html'
     form_class = CustomerForm

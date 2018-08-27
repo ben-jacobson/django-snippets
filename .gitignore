@@ -32,3 +32,4 @@ auth_demo/signin/__pycache__/**
 .vscode
 geckodriver.log
 
+auth_demo/signin/tests/__pycache__/**
