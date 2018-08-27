@@ -6,6 +6,7 @@ from django.contrib.contenttypes.models import ContentType
 from signin.models import Superhero
 
 from django.shortcuts import get_object_or_404
+from django.urls import reverse
 
 def create_test_user(username='test@mctestersonandco.com', password='test1234'):
     user_ = User.objects.create_user(username=username, password=password)
@@ -19,8 +20,7 @@ def create_a_test_permission(content_type, codename='test_perm'):
         content_type=content_type,
     )
 
-
-## A lot of these tests below, they do test core django functionality, which is unncessary. It is however still useful because it documents the syntax required to do certain jobs, eg in the command line, or in views
+## A lot of these tests below test framework functionality, which is not best-practice. It is however still useful because it documents how to do certain things for future reference, eg in the command line, or in views
 class AuthenticationTests(TestCase):
     def test_can_create_and_assign_permissions_to_users(self):
         user_ = create_test_user()
@@ -76,3 +76,9 @@ class AuthenticationTests(TestCase):
 
         user_ = authenticate(username=username, password=password)
         self.assertIsNotNone(user_, msg='Authenticating user did not work')
+
+    def test_accessing_page_without_login_gives_error_message(self):
+        # without creating or authenticating a user, attempt to access a page that we aren't able to.
+        response = self.client.get(reverse('superhero_listview'))
+        self.assertContains(response, "You must be logged in to view this page", status_code=401)
+
