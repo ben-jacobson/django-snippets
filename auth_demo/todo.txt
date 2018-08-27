@@ -1,6 +1,6 @@
 Todo:
 -start with functional tests, user story is a login page that takes you to a basic dashboard, where you can see a list of modelForms, ones for deletion, others for read-only view
--establish three base permissions - readonly, add and delete
+-make use of three base permissions - readonly, add and delete (access them with perms = Permission.objects.filter(content_type=superhero_content_type))
 -set up a group 'all_access' with all 3 base permissions included
 -set up two users, assign one the permission 'readonly', the other the 'all_access' group 
 -build a view "loginView"
@@ -18,9 +18,9 @@ Functional test ideas:
 -login to page with read_only user and attempt to edit + delete data
 
 Unit test ideas:
--check group 'all_access' has correct base permissions assigned
--assign a permission to a user, assert it worked (has_perm)
--assign a group to a user and assert it worked (for this test, create separate group with only read and add, but not delete)
--create a user, assert it worked
+/-check group 'all_access' has correct base permissions assigned
+/-assign a permission to a user, assert it worked (has_perm)
+/-assign a group to a user and assert it worked (for this test, create separate group with only read and add, but not delete)
+/-create a user, assert it worked
 -create test data using a form without authenticated user, assert it didn't work
 -create test data using a form with an authenticated user, assert it worked
