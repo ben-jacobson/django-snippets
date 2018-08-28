@@ -21,8 +21,7 @@
 <h1 class='page-title' style='font-size: 14px;'>Login to Superhero Database</h1>
 <form action="/" method="post">
     {% csrf_token %}
-    <table id='customer-form'>
-        <input id="login-button" type="submit" value="Login" /></td>
-    </table>
+    {{ form.as_p }}
+    <input id="login-button" type="submit" value="Login" /></td>
 </form>
 {% endblock %}

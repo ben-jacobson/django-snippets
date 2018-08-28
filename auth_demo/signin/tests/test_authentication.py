@@ -9,20 +9,13 @@ from django.shortcuts import get_object_or_404
 from django.urls import reverse
 from auth_demo.settings import LOGIN_URL
 
-def create_test_user(username='test@mctestersonandco.com', password='test1234'):
-    user_ = User.objects.create_user(username=username, password=password)
-    user_.save()
-    return user_
-
-def create_a_test_permission(content_type, codename='test_perm'):
-    return Permission.objects.create(
-        codename=codename,
-        name='Description of test permission',
-        content_type=content_type,
-    )
+from .base import create_test_user, create_a_test_permission
 
 ## A lot of these tests below test framework functionality, which is not best-practice. It is however still useful because it documents how to do certain things for future reference, eg in the command line, or in views
 class AuthenticationTests(TestCase):
+    def test_post_login_data_and_logout(self):
+        self.fail("Finish this test - post request with login data results in succcessful login, then logout")
+
     def test_can_create_and_assign_permissions_to_users(self):
         user_ = create_test_user()
         self.assertFalse(user_.has_perm('signin.test_perm'))
