@@ -7,6 +7,7 @@ from signin.models import Superhero
 
 from django.shortcuts import get_object_or_404
 from django.urls import reverse
+from auth_demo.settings import LOGIN_URL
 
 def create_test_user(username='test@mctestersonandco.com', password='test1234'):
     user_ = User.objects.create_user(username=username, password=password)
@@ -78,7 +79,7 @@ class AuthenticationTests(TestCase):
         self.assertIsNotNone(user_, msg='Authenticating user did not work')
 
     def test_accessing_page_without_login_gives_error_message(self):
-        # without creating or authenticating a user, attempt to access a page that we aren't able to.
+        # without creating or authenticating a user, attempt to access a page that we aren't able to without logging in.
         response = self.client.get(reverse('superhero_listview'))
-        self.assertContains(response, "You must be logged in to view this page", status_code=401)
-
+        expected_url = LOGIN_URL + '?next=' + reverse('superhero_listview')
+        self.assertRedirects(response, expected_url=expected_url) 
