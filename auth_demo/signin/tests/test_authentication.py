@@ -4,7 +4,6 @@ from django.contrib.auth.models import User, Permission, Group
 from django.contrib.auth import authenticate
 from django.contrib.contenttypes.models import ContentType
 from signin.models import Superhero
-
 from django.shortcuts import get_object_or_404
 from django.urls import reverse
 from auth_demo.settings import LOGIN_URL
@@ -14,7 +13,24 @@ from .base import create_test_user, create_a_test_permission
 ## A lot of these tests below test framework functionality, which is not best-practice. It is however still useful because it documents how to do certain things for future reference, eg in the command line, or in views
 class AuthenticationTests(TestCase):
     def test_post_login_data_and_logout(self):
-        self.fail("Finish this test - post request with login data results in succcessful login, then logout")
+        test_login_data = {
+            'email_username': 'test@mctestersonandco.com.au',
+            'password': 'test1234',
+        }
+        user_ = create_test_user(username=test_login_data['email_username'], password=test_login_data['password'])
+        response = self.client.post(reverse('home_page'), test_login_data)
+        self.assertRedirects(response, expected_url=reverse('superhero_listview'))
+        self.assertContains(response, 'Superhero Database') 
+        self.assertContains(response, 'Log out')
+
+        try:
+            self.client.logout()
+        except:
+            self.fail('Could not log out, unsure why')
+
+        user_.delete()    # delinting - unused user_ is throwing unused error 
+        
+        self.assertRedirects(response, expected_url=reverse('home_page'))
 
     def test_can_create_and_assign_permissions_to_users(self):
         user_ = create_test_user()

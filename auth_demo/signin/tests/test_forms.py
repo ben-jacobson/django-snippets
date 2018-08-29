@@ -3,14 +3,15 @@ from signin.forms import LoginForm
 from django.urls import reverse
 
 class LoginFormTests(TestCase): 
-    def test_post_invalid_username_andor_password(self):
+    '''def test_post_invalid_username_andor_password(self):
         test_login_data = {
             'email_username': 'test@mctestersonandco.com.au',
             'password': 'test1234',
         }        
         response = self.client.post(reverse('home_page'), test_login_data)
         self.assertEqual(response.status_code, 200, msg='If form is invalid, it shouldnt redirect')
-        self.assertContains(response, 'Invalid Username.') # Page should have atleast one invalid form message on page'''
+        self.assertContains(response, 'Invalid Username.') # Page should have atleast one invalid form message on page
+    '''     # since this isn't a model form, the validation messages don't appear on screen, instead the default browser validation appears
 
     def test_form_validation(self): 
         invalid_form_test_data = {'email_username': 'Invalid Test'}
@@ -20,7 +21,7 @@ class LoginFormTests(TestCase):
 
         # you can check the various errors produced by the form with form.errors
         self.assertEqual(login_test_form.errors, {
-            #'email_username': ['This field is required.'],
+            #'email_username': ['This field is required.'], # have already supplied a username
             'password': ['This field is required.'],           
         })
 
