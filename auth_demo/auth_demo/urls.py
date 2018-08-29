@@ -20,7 +20,6 @@ from signin import views
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
-
     path('', views.home_page.as_view(), name="home_page"),
     #path('superheroes/', login_required(TemplateView.as_view(template_name='superhero_listview.html')), name="superhero_listview"),
     #path('superheroes/', views.superhero_listView, name="superhero_listview"),

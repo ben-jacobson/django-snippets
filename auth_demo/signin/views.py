@@ -1,15 +1,21 @@
-from django.shortcuts import redirect, render_to_response#, render
-from django.urls import reverse
+#from django.shortcuts import redirect, render_to_response#, render
+#from django.urls import reverse
 
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from django.views.generic import TemplateView
-from django.views.generic.edit import FormView
+#from django.views.generic.edit import FormView
 
-from django.contrib.auth import authenticate, login
-from .forms import LoginForm
+#from django.contrib.auth import authenticate, login
+#from .forms import LoginForm
 
-class home_page(FormView):       # However if doing this manually, you'll need to use the FormView. Hint - this makes it easier to test because the $
+from django.contrib.auth.views import LoginView
+
+
+class home_page(LoginView):
+    template_name = 'home.html'
+
+'''class home_page(FormView):       # Delete this, once we have something that works
     template_name = 'home.html'
     form_class = LoginForm
     
@@ -35,7 +41,7 @@ class home_page(FormView):       # However if doing this manually, you'll need t
                 context['error_message'] = "Username and/or password was incorrect"
                 return render_to_response(self.template_name, context)
         else:
-            return render_to_response(self.template_name, context)
+            return render_to_response(self.template_name, context)'''
 
 # there are a couple of ways of requiring logins for pages, this is the raw way. With this method decorator, it relies on some settings within Settings.py - see comments near LOGIN_URL
 @method_decorator(login_required, name='dispatch')       #  see below for alternative ways to do this. 

@@ -25,11 +25,10 @@ class AuthenticationTests(TestCase):
 
         try:
             self.client.logout()
-        except:
+        except: 
             self.fail('Could not log out, unsure why')
 
         user_.delete()    # delinting - unused user_ is throwing unused error 
-        
         self.assertRedirects(response, expected_url=reverse('home_page'))
 
     def test_can_create_and_assign_permissions_to_users(self):
@@ -92,3 +91,13 @@ class AuthenticationTests(TestCase):
         response = self.client.get(reverse('superhero_listview'))
         expected_url = LOGIN_URL + '?next=' + reverse('superhero_listview')
         self.assertRedirects(response, expected_url=expected_url) 
+
+    def test_invalid_password_generates_new_csrf(self):
+        self.fail("Finish the test - finding that if you attempt to login a second time, we're getting a 403 due to mismatch in CSRF")
+
+    def test_set_new_password(self):
+        # no real need to test this, more just so that I've got the syntax on hand if needed.
+        user_ = create_test_user()          
+        original_password_hash = user_.password
+        user_.set_password('new password')
+        self.assertNotEqual(original_password_hash, user_.password)
