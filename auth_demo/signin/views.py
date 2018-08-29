@@ -11,10 +11,21 @@ from django.views.generic import TemplateView
 
 from django.contrib.auth.views import LoginView
 
-
 class home_page(LoginView):
     template_name = 'home.html'
 
+# there are a couple of ways of requiring logins for pages, this is the raw way. With this method decorator, it relies on some settings within Settings.py - see comments near LOGIN_URL
+@method_decorator(login_required, name='dispatch')       #  see below for alternative ways to do this. 
+class superhero_listView(TemplateView):  
+    template_name = 'superhero_listview.html'  
+
+@method_decorator(login_required, name='dispatch')   # you can even specify - permission_required=
+class superhero_detailView(TemplateView):
+    template_name = 'superhero_detailview.html'
+
+
+
+## Old code that has since been refactored
 '''class home_page(FormView):       # Delete this, once we have something that works
     template_name = 'home.html'
     form_class = LoginForm
@@ -43,15 +54,6 @@ class home_page(LoginView):
         else:
             return render_to_response(self.template_name, context)'''
 
-# there are a couple of ways of requiring logins for pages, this is the raw way. With this method decorator, it relies on some settings within Settings.py - see comments near LOGIN_URL
-@method_decorator(login_required, name='dispatch')       #  see below for alternative ways to do this. 
-class superhero_listView(TemplateView):  
-    template_name = 'superhero_listview.html'  
-
-@method_decorator(login_required, name='dispatch')   # you can even specify - permission_required=
-class superhero_detailView(TemplateView):
-    template_name = 'superhero_detailview.html'
-
 
 '''def superhero_listView(request):
     if not request.user.is_authenticated:
@@ -71,6 +73,3 @@ def superhero_listView(request):
     def get(self, request):
         return render(request, self.template_name)
 '''
-
-#class home_page(TemplateView):
-#    template_name = 'home.html'

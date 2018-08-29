@@ -2,29 +2,40 @@
 
 {% block page-title %}Login to Superhero Database{% endblock %}
 
+{% block main-content %}
+
 {% if form.errors %}
-    {% for field in form %}
-        {% for error in field.errors %}
-            <div class="alert alert-danger">
-                <strong>{{ error|escape }}</strong>
-            </div>
-        {% endfor %}
-    {% endfor %}
-    {% for error in form.non_field_errors %}
-        <div class="alert alert-danger">
-            <strong>{{ error|escape }}</strong>
-        </div>
-    {% endfor %}
+    <p class='login-error'>Your username and password didn't match. Please try again.</p>
 {% endif %}
 
-{% block main-content %}
-<h1 class='page-title' style='font-size: 14px;'>Login to Superhero Database</h1>
-{% if error_message %}
-    <p class='error-messages'>{{ error_message }}</p>
+{% if next %}
+    {% if user.is_authenticated %}
+        <p class='login-error'>Your account doesn't have access to this page. To proceed, please login with an account that has access.</p>
+    {% else %}
+        <p class='login-error'>Please login to see this page.</p>
+    {% endif %}
 {% endif %}
-<form method="post">
+
+<h1 class='page-title' style='font-size: 14px;'>Login to Superhero Database</h1>
+<form method="post" action="{% url 'home_page' %}">
     {% csrf_token %}
-    {{ form.as_p }}
-    <input id="login-button" type="submit" value="Login" /></td>
+    <table>
+        <tr>
+            <td>{{ form.username.label_tag }}</td>
+            <td>{{ form.username }}</td>
+        </tr>
+        <tr>
+            <td>{{ form.password.label_tag }}</td>
+            <td>{{ form.password }}</td>
+        </tr>
+    </table>
+    <input id='login-button' type="submit" value="Login">
+    <input type="hidden" name="next" value="{{ next }}">
 </form>
+
+{# Assumes you setup the password_reset view in your URLconf #}
+<p><a href="{# url 'password_reset' #}">Lost password?</a></p>
+
 {% endblock %}
+
+

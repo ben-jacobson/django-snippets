@@ -2,7 +2,7 @@ from django.test import TestCase
 #from signin.forms import LoginForm
 from django.urls import reverse
 
-#from .base import create_test_user
+from .base import create_test_user
 
 class LoginFormTests(TestCase): 
     def test_post_invalid_username_andor_password(self):
@@ -15,22 +15,28 @@ class LoginFormTests(TestCase):
         }        
         response = self.client.post(reverse('home_page'), test_login_data)
         self.assertEqual(response.status_code, 200, msg='If form is invalid, it shouldnt redirect')
-        self.assertContains(response, 'Please enter a correct username and password') # Page should have atleast one invalid form message on page
+        self.assertContains(response, 'login-error') # Page should have atleast one invalid form message on page
 
-    def test_form_validation(self): 
-        self.fail('Finish the test - figure out a way to import the auth form into this test')
-        #invalid_form_test_data = {'email_username': 'Invalid Test'}
-        #login_test_form = LoginForm(data=invalid_form_test_data)
-        #login_test_form.full_clean()
-        #self.assertFalse(login_test_form.is_valid(), msg='form.is_valid() should return false since we supplied an invalid username')
+    def test_post_valid_login_data_and_logout(self):
+        test_login_data = {
+            'email_username': 'test@mctestersonandco.com.au',
+            'password': 'test1234',
+        }
+        user_ = create_test_user(username=test_login_data['email_username'], password=test_login_data['password'])
+        response = self.client.post(reverse('home_page'), test_login_data)
+        #self.assertRedirects(response, expected_url=reverse('superhero_listview'))
+        self.assertContains(response, 'Superhero Database') 
+        self.assertContains(response, 'Log out')
 
-        # you can check the various errors produced by the form with form.errors
-        #self.assertEqual(login_test_form.errors, {
-            #'email_username': ['This field is required.'], # have already supplied a username
-        #    'password': ['This field is required.'],           
-        #})
+        try:
+            self.client.logout()
+        except: 
+            self.fail('Could not log out, unsure why')
 
-    def test_form_sets_fields_as_required(self):
+        user_.delete()    # delinting - unused user_ is throwing unused error 
+        self.assertRedirects(response, expected_url=reverse('home_page'))
+
+    def test_form_sets_required_fields_as(self):
         response = self.client.get(reverse('home_page'))
         self.assertEqual(response.status_code, 200, msg='Home page should load correctly')
         self.assertContains(response, 'required') # Page should have atleast one invalid form message on page

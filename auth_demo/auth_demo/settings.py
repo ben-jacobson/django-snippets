@@ -101,8 +101,8 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 # the method decorators - login_reqired' use these
-LOGIN_URL ='/' 
-#LOGIN_REDIRECT_URL = '/'  # if you want to make use of a specific login url, use this
+LOGIN_URL ='/'    # in django 1.9 isntead of hard-coding urls, you can use the urls name
+LOGIN_REDIRECT_URL = 'superhero_listview'  # if you want to make use of a specific login url, use this
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.11/topics/i18n/

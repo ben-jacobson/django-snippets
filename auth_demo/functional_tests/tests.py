@@ -73,3 +73,12 @@ class AuthenticationTests(FunctionalTest):
 
         # user attempts to edit data and succeeeds
         self.fail('finish the test')
+
+class FormValidationTests(FunctionalTest):
+    def test_failed_login_attempt_generates_new_csrf(self):
+        # finding that if you don't correctly implement the login view, the form's CSRF doens't update.
+        # turns out this was user error, I was originally using generic FormView and was able to fix this issue once we switched to generic LoginView
+        self.fail('finish the test')
+
+    def test_form_validation(self):
+        self.fail('finish the test')
