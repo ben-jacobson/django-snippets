@@ -1,7 +1,9 @@
 {% extends 'base.html' %}
 
-{% block page-title %}superhero_detailview{% endblock %}
+{% block page-title %}{{ object.name }}{% endblock %}
 
 {% block main-content %}
-superhero_detailview
+<h1 class='superhero-detail-page-title' style='font-size: 16px;'>{{ object.name }}</h1>
+<p class='superhero-detail-bio'>{{ object.bio }}</p>
+<img src='{{ object.picture }}' width=200 />
 {% endblock %}

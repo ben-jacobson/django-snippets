@@ -1,6 +1,6 @@
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 from selenium import webdriver
-#from selenium.webdriver.common.keys import Keys
+from signin.tests.base import create_test_user, create_test_superhero
 
 MAX_WAIT = 10 # 10 second max wait
 
@@ -13,13 +13,20 @@ class FunctionalTest(StaticLiveServerTestCase):
         # the page title is referenced multiple times in tests below, setting a variable in case this changes in future
         self.home_page_title = 'Login to Superhero Database'
 
+        # create some test data for the functional tests
+        create_test_superhero(name='Batman')
+        create_test_superhero(name='Iron Man')
+        create_test_superhero(name='Spiderman')
+
         # create a set of credentials for testing purposes
         self.test_username = 'test@mctestersonandco.com'
         self.test_password = 'asdf1234'
 
         # create a test user for all functional tests 
+        create_test_user(username=self.test_username, password=self.test_password)
 
         # assign permissions for all functional tests
+
 
     def tearDown(self):
         self.browser.quit()
@@ -27,7 +34,9 @@ class FunctionalTest(StaticLiveServerTestCase):
 
     def visit_test_page_and_signin(self, username, password):
         self.browser.get(self.live_server_url)
-        pass
+        self.browser.find_element_by_id('id_username').send_keys(self.test_username)
+        self.browser.find_element_by_id('id_password').send_keys(self.test_password)
+        self.browser.find_element_by_id('login-button').click()
 
 class LayoutAndStylingTest(FunctionalTest):
     def test_signin_page_form(self):
@@ -54,6 +63,10 @@ class AuthenticationTests(FunctionalTest):
     def test_user_can_login_and_see_test_data(self):
         # user visits home page and attempts to log in
         self.visit_test_page_and_signin(username=self.test_username, password=self.test_password)
+        superheroes = self.browser.find_elements_by_class_name('superhero-name')
+        self.assertIn('Batman', superheroes)
+        self.assertIn('Iron Man', superheroes)
+        self.assertIn('Spiderman', superheroes)
         self.fail('finish the test')
 
     def test_user_given_readonly_cannot_edit_data(self):

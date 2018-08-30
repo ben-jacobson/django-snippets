@@ -1,9 +1,17 @@
 {% extends 'base.html' %}
 
-{% block page-title %}superhero_listview{% endblock %}
+{% block page-title %}Superhero Database{% endblock %}
 
 {% block main-content %}
 <h1 class='page-title' style='font-size: 14px;'>Superhero Database</h1>
+
+{% if superhero_list %}
+<ul>
+    {% for superhero in superhero_list.all %}
+        <li class='superhero-name'><a href='#'>{{ superhero.name }}</a></li>
+    {% endfor %}
+</ul>
+{% endif %}
 
 <p><a class='logout' href='#'>Logout</a></p>
 {% endblock %}

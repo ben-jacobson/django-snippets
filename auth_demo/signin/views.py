@@ -1,29 +1,26 @@
-#from django.shortcuts import redirect, render_to_response#, render
-#from django.urls import reverse
-
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
-from django.views.generic import TemplateView
-#from django.views.generic.edit import FormView
-
-#from django.contrib.auth import authenticate, login
-#from .forms import LoginForm
-
+#from django.views.generic import TemplateView
 from django.contrib.auth.views import LoginView
+from django.views.generic import ListView, DetailView
+from signin.models import Superhero
 
 class home_page(LoginView):
     template_name = 'home.html'
 
 # there are a couple of ways of requiring logins for pages, this is the raw way. With this method decorator, it relies on some settings within Settings.py - see comments near LOGIN_URL
 @method_decorator(login_required, name='dispatch')       #  see below for alternative ways to do this. 
-class superhero_listView(TemplateView):  
+class superhero_listView(ListView):  
     template_name = 'superhero_listview.html'  
+    context_object_name = 'superhero_list'
+
+    def get_queryset(self):
+        return Superhero.objects.all()
 
 @method_decorator(login_required, name='dispatch')   # you can even specify - permission_required=
-class superhero_detailView(TemplateView):
+class superhero_detailView(DetailView):
     template_name = 'superhero_detailview.html'
-
-
+    model = Superhero
 
 ## Old code that has since been refactored
 '''class home_page(FormView):       # Delete this, once we have something that works
