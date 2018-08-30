@@ -27,16 +27,24 @@ class FunctionalTest(StaticLiveServerTestCase):
 
         # assign permissions for all functional tests
 
-
     def tearDown(self):
         self.browser.quit()
         super().tearDown()
 
     def visit_test_page_and_signin(self, username, password):
+        if username is None:
+            username = self.test_username
+        if password is None:
+            password = self.test_password
+
         self.browser.get(self.live_server_url)
-        self.browser.find_element_by_id('id_username').send_keys(self.test_username)
-        self.browser.find_element_by_id('id_password').send_keys(self.test_password)
+        self.browser.find_element_by_id('id_username').send_keys(username)
+        self.browser.find_element_by_id('id_password').send_keys(password)
         self.browser.find_element_by_id('login-button').click()
+
+    def visit_test_page_and_enter_incorrect_login(self, username='wrong@user.com', password='wrong password'):
+        self.visit_test_page_and_signin(username, password)   # just a simple wrapper to aid in code readability
+
 
 class LayoutAndStylingTest(FunctionalTest):
     def test_signin_page_form(self):
@@ -64,10 +72,15 @@ class AuthenticationTests(FunctionalTest):
         # user visits home page and attempts to log in
         self.visit_test_page_and_signin(username=self.test_username, password=self.test_password)
         superheroes = self.browser.find_elements_by_class_name('superhero-name')
-        self.assertIn('Batman', superheroes)
-        self.assertIn('Iron Man', superheroes)
-        self.assertIn('Spiderman', superheroes)
-        self.fail('finish the test')
+
+        # since find_elements returns a list of element objects, we'll need to extract their text before testing
+        text_from_superheroes = []
+        for element in superheroes:        # creates ['Batman', 'Iron Man', 'Spiderman']
+            text_from_superheroes.append(element.text)
+
+        self.assertIn('Batman', text_from_superheroes)
+        self.assertIn('Iron Man', text_from_superheroes)
+        self.assertIn('Spiderman', text_from_superheroes)
 
     def test_user_given_readonly_cannot_edit_data(self):
         # user visits home page and attempts to log in
@@ -91,7 +104,16 @@ class FormValidationTests(FunctionalTest):
     def test_failed_login_attempt_generates_new_csrf(self):
         # finding that if you don't correctly implement the login view, the form's CSRF doens't update.
         # turns out this was user error, I was originally using generic FormView and was able to fix this issue once we switched to generic LoginView
-        self.fail('finish the test')
+        self.browser.get(self.live_server_url) # unfortunately can't use the visit_test_page_and_enter_incorrect_login since it won't give us the chance to capture the csrf token
+        csrf_token = self.browser.find_element_by_name('csrfmiddlewaretoken').get_attribute('value')
+        self.browser.find_element_by_id('id_username').send_keys(self.test_username)
+        self.browser.find_element_by_id('id_password').send_keys('deliberately entering the wrong password')
+        self.browser.find_element_by_id('login-button').click()        
+        new_csrf_token = self.browser.find_element_by_name('csrfmiddlewaretoken').get_attribute('value')
+        self.assertNotEqual(csrf_token, new_csrf_token)
 
     def test_form_validation(self):
-        self.fail('finish the test')
+        self.visit_test_page_and_enter_incorrect_login()
+        login_errors = self.browser.find_elements_by_css_selector('.login-error')       # using a css selector cause the error messages may appear as list items, or p tags
+        self.assertGreater(len(login_errors), 0, msg='there should be at least one error message on page')
+        self.fail('finish this test - need to verify specific errors')

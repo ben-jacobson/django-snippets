@@ -15,7 +15,7 @@ class ViewTests(TestCase):
         self.assertTemplateUsed(response, 'superhero_listview.html')
 
     def test_superhero_detailView_renders_template(self):
-        hero_one = create_test_superhero(name='Batman')
+        create_test_superhero(name='Batman')
         create_test_user_and_login(client=self.client)
         superhero_id = 1
         response = self.client.get(reverse('superhero_detailview', kwargs={'pk': superhero_id}))
