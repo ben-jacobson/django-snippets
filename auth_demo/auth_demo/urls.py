@@ -17,12 +17,17 @@ from django.urls import path
 from django.conf.urls import url
 from django.contrib import admin
 from signin import views
+#from django.contrib.auth import views as auth_views
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
-    path('', views.home_page.as_view(), name="home_page"),
-    #path('superheroes/', login_required(TemplateView.as_view(template_name='superhero_listview.html')), name="superhero_listview"),
-    #path('superheroes/', views.superhero_listView, name="superhero_listview"),
+    #path('', auth_views.LoginView.as_view(template_name='home.html'), name="home_page"), As a shortcut, you can simply call the view directly, rather than defining it in Views.py
+    path('', views.home_page.as_view(), name="home_page"), # I prefer this since it's a little more verbose
+
     path('superheroes/', views.superhero_listView.as_view(), name="superhero_listview"),
     path('superheroes/<int:pk>/', views.superhero_detailView.as_view(), name="superhero_detailview"),
 ]
+
+
+
+
