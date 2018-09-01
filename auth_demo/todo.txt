@@ -1,26 +1,15 @@
 Todo:
--start with functional tests, user story is a login page that takes you to a basic dashboard, where you can see a list of modelForms, ones for deletion, others for read-only view
--make use of three base permissions - readonly, add and delete (access them with perms = Permission.objects.filter(content_type=superhero_content_type))
--set up a group 'all_access' with all 3 base permissions included
--set up two users, assign one the permission 'readonly', the other the 'all_access' group 
-/-build a view "loginView"
-/-if loginView requires a separate form, create that too
-/-set up a page full of data that only autenticated users can see, use a pre-populated modelForm
--set up a page with data read from a test model, data that can be deleted
--since we're spiking, go back and fill out any remaining unit tests
+-Create a modelform for Superhero + appropriate unit tests for this modelform
+-incorporate this modelForm into the DetailView - set up the view so that read_only users can see the data, but not edit. and users with write access get a pre-populated modelForm on page
+-for users with 'delete' permissions, incorporate a working 'delete' button
+-create an 'add to database' function + unit/functional tests
 
 Functional test ideas:
-/-sign up to site
--attempt to view page that user doesn't have permissions to read
--attempt to edit page that user doesn't have permission to edit
--attempt to delete data that user doesn't have permission to delete
--login to page, view data for read_only user
--login to page with read_only user and attempt to edit + delete data
+-test that readonly can only see the data, no edit button or delete button is present
+-test that write_access users can see and edit the data, but does not have a delete button
+-test that delete_access users can do all of the above
+-write other tests that ensure users without correct permissions, cannot do any of the above. 
 
 Unit test ideas:
-/-check group 'all_access' has correct base permissions assigned
-/-assign a permission to a user, assert it worked (has_perm)
-/-assign a group to a user and assert it worked (for this test, create separate group with only read and add, but not delete)
-/-create a user, assert it worked
 -create test data using a form without authenticated user, assert it didn't work
 -create test data using a form with an authenticated user, assert it worked
