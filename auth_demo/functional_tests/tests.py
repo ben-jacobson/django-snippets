@@ -31,7 +31,7 @@ class FunctionalTest(StaticLiveServerTestCase):
         self.browser.quit()
         super().tearDown()
 
-    def visit_test_page_and_signin(self, username, password):
+    def visit_test_page_and_signin(self, username=None, password=None):
         if username is None:
             username = self.test_username
         if password is None:
@@ -44,7 +44,6 @@ class FunctionalTest(StaticLiveServerTestCase):
 
     def visit_test_page_and_enter_incorrect_login(self, username='wrong@user.com', password='wrong password'):
         self.visit_test_page_and_signin(username, password)   # just a simple wrapper to aid in code readability
-
 
 class LayoutAndStylingTest(FunctionalTest):
     def test_signin_page_form(self):
@@ -60,6 +59,23 @@ class LayoutAndStylingTest(FunctionalTest):
         #... notices that there is a form on the page, with a button that says 'Login'
         self.assertEqual(self.browser.find_element_by_id('login-button').get_attribute('value'), 'Login', msg='Form submit button should read "Login"')
 
+class ViewTests(FunctionalTest):
+    def test_ListView_has_links_to_DetailView(self):
+        self.visit_test_page_and_signin()
+        superheroes = self.browser.find_elements_by_class_name('superhero-name')
+
+        # since find_elements returns a list of element objects, we'll need to extract their text before testing
+        links_to_superheroes = []
+        for element in superheroes:     # produces list of hyperlinks to the superheroes in the database   
+            links_to_superheroes.append(element.find_element_by_tag_name('a').get_attribute('href'))
+
+        url_prefix = self.live_server_url + '/superheroes/'
+        self.assertEqual(links_to_superheroes, [
+            url_prefix + 'batman',
+            url_prefix + 'iron_man',            
+            url_prefix + 'spiderman',            
+        ])
+
 class AuthenticationTests(FunctionalTest):
     def test_user_cannot_access_test_data_without_login(self):
         # user goes directly to page with secret information
@@ -70,7 +86,7 @@ class AuthenticationTests(FunctionalTest):
 
     def test_user_can_login_and_see_test_data(self):
         # user visits home page and attempts to log in
-        self.visit_test_page_and_signin(username=self.test_username, password=self.test_password)
+        self.visit_test_page_and_signin()
         superheroes = self.browser.find_elements_by_class_name('superhero-name')
 
         # since find_elements returns a list of element objects, we'll need to extract their text before testing
@@ -84,7 +100,7 @@ class AuthenticationTests(FunctionalTest):
 
     def test_user_given_readonly_cannot_edit_data(self):
         # user visits home page and attempts to log in
-        self.visit_test_page_and_signin(username=self.test_username, password=self.test_password)
+        self.visit_test_page_and_signin()
 
         # user sees data and attempts to edit it
 
@@ -93,7 +109,7 @@ class AuthenticationTests(FunctionalTest):
 
     def test_user_given_edit_perm_can_edit_data(self):
         # user visits home page and attempts to log in
-        self.visit_test_page_and_signin(username=self.test_username, password=self.test_password)
+        self.visit_test_page_and_signin()
 
         # user knows that they have correct permissions to edit data
 

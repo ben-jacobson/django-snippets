@@ -8,7 +8,7 @@
 {% if superhero_list %}
 <ul>
     {% for superhero in superhero_list.all %}
-        <li class='superhero-name'><a href='#'>{{ superhero.name }}</a></li>
+        <li class='superhero-name'><a href='{{ superhero.get_absolute_url }}'>{{ superhero.name }}</a></li>
     {% endfor %}
 </ul>
 {% endif %}

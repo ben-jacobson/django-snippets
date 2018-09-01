@@ -15,10 +15,9 @@ class ViewTests(TestCase):
         self.assertTemplateUsed(response, 'superhero_listview.html')
 
     def test_superhero_detailView_renders_template(self):
-        create_test_superhero(name='Batman')
+        hero = create_test_superhero(name='Batman')
         create_test_user_and_login(client=self.client)
-        superhero_id = 1
-        response = self.client.get(reverse('superhero_detailview', kwargs={'pk': superhero_id}))
+        response = self.client.get(reverse('superhero_detailview', kwargs={'slug': hero.slug}))
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'superhero_detailview.html')
 
@@ -40,6 +39,6 @@ class ViewTests(TestCase):
     def test_superhero_detailView_contains_test_data(self):
         hero = create_test_superhero(name='Batman')
         create_test_user_and_login(client=self.client)
-        response = self.client.get(reverse('superhero_detailview', kwargs={'pk': hero.id}))
+        response = self.client.get(reverse('superhero_detailview', kwargs={'slug': hero.slug}))
         self.assertContains(response, hero.name)
    

@@ -25,7 +25,7 @@ urlpatterns = [
     path('', views.home_page.as_view(), name="home_page"), # I prefer this since it's a little more verbose
 
     path('superheroes/', views.superhero_listView.as_view(), name="superhero_listview"),
-    path('superheroes/<int:pk>/', views.superhero_detailView.as_view(), name="superhero_detailview"),
+    path('superheroes/<slug:slug>/', views.superhero_detailView.as_view(), name="superhero_detailview"),
 ]
 
 

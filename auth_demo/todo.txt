@@ -3,14 +3,14 @@ Todo:
 -make use of three base permissions - readonly, add and delete (access them with perms = Permission.objects.filter(content_type=superhero_content_type))
 -set up a group 'all_access' with all 3 base permissions included
 -set up two users, assign one the permission 'readonly', the other the 'all_access' group 
--build a view "loginView"
--if loginView requires a separate form, create that too
--set up a page full of data that only autenticated users can see, use a pre-populated modelForm
+/-build a view "loginView"
+/-if loginView requires a separate form, create that too
+/-set up a page full of data that only autenticated users can see, use a pre-populated modelForm
 -set up a page with data read from a test model, data that can be deleted
 -since we're spiking, go back and fill out any remaining unit tests
 
 Functional test ideas:
--sign up to site
+/-sign up to site
 -attempt to view page that user doesn't have permissions to read
 -attempt to edit page that user doesn't have permission to edit
 -attempt to delete data that user doesn't have permission to delete
