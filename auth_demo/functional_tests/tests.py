@@ -71,9 +71,9 @@ class ViewTests(FunctionalTest):
 
         url_prefix = self.live_server_url + '/superheroes/'
         self.assertEqual(links_to_superheroes, [
-            url_prefix + 'batman',
-            url_prefix + 'iron_man',            
-            url_prefix + 'spiderman',            
+            url_prefix + 'batman/',
+            url_prefix + 'iron_man/',            
+            url_prefix + 'spiderman/',            
         ])
 
 class AuthenticationTests(FunctionalTest):
