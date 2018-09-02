@@ -41,4 +41,8 @@ class ViewTests(TestCase):
         create_test_user_and_login(client=self.client)
         response = self.client.get(reverse('superhero_detailview', kwargs={'slug': hero.slug}))
         self.assertContains(response, hero.name)
+
+    def test_superhero_detailView_redirects_with_edit_permissions(self):
+        #if you have edit or delete permissions, instead of simply viewing the data, you'll be able to edit the data. The app achieves this by testing for permissions, then redirecting to an edit page if you have the right permissions
+        self.fail('finish this test')
    

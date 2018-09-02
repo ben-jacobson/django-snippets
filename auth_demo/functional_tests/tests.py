@@ -98,23 +98,47 @@ class AuthenticationTests(FunctionalTest):
         self.assertIn('Iron Man', text_from_superheroes)
         self.assertIn('Spiderman', text_from_superheroes)
 
-    def test_user_given_readonly_cannot_edit_data(self):
-        # user visits home page and attempts to log in
-        self.visit_test_page_and_signin()
-
-        # user sees data and attempts to edit it
-
-        # user is told that they do not have the correct permissions to do this
-        self.fail('finish the test')        
-
     def test_user_given_edit_perm_can_edit_data(self):
+        # start by giving the user the correct permission to edit
+
         # user visits home page and attempts to log in
         self.visit_test_page_and_signin()
 
-        # user knows that they have correct permissions to edit data
+        # user clicks on a superhero from the list, knowing that they have the correct permissions to edit the data
 
-        # user attempts to edit data and succeeeds
+        # user notices that instead of seeing the detailView, the user is redirected to a FormView which allows them to edit the page
+
+        # User makes some modifications to the Superhero
+
+        # user then attempts to save the data, pressing the 'save' button
+
+        # user notices that the data has been edited as per their modification
         self.fail('finish the test')
+
+    def test_user_given_readonly_cannot_edit_data(self):
+        # user is not given the correct permission to edit
+
+        # user visits home page and attempts to log in
+        self.visit_test_page_and_signin()
+
+        # user clicks on a superhero from the list
+
+        # user notices that they are not redirected to the FormView which allows them to edit the page
+
+        # Frustrated, the user tries to visit the page by going directly to the URL
+
+        # user is redirected to login page
+
+        # user notices that 'next' field is populated with the superhero edit page
+
+        # user is given a notice that they don't have the correct permissions to edit pages, and given the opportunity to login with a different username 
+        self.fail('finish the test - we may be able to refactor some of the code from "test_user_given_edit_perm_can_edit_data"')  
+
+    def test_user_given_delete_access_can_delete_data(self):
+        self.fail('finish the test')  
+
+    def test_user_cannot_delete_data_without_correct_permissions(self):
+        self.fail('finish the test')          
 
 class FormValidationTests(FunctionalTest):
     def test_failed_login_attempt_generates_new_csrf(self):
