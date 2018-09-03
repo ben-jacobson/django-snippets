@@ -3,6 +3,7 @@ from django.urls import reverse
 from django.contrib.auth import get_user
 from .base import create_test_user, create_test_superhero, create_test_user_and_login
 from signin.models import Superhero
+from django.contrib.auth.models import Permission
 
 class LoginFormTests(TestCase): 
     def test_post_invalid_username_andor_password(self):
@@ -56,40 +57,45 @@ class SuperheroEditTest(TestCase):
             'bio': 'Batman, except fat',
             'picture': 'www.google.com',
         }
-        create_test_user_and_login(client=self.client) # first login as an autheticated user
-        self.fail('Finish this test - add the correct permissions to the user before attempting to modify')
-        response = self.client.post(reverse('superhero_detailview', kwargs={'slug': hero.slug}), hero_modifications)        
-        self.assertRedirects(response, expected_url=reverse('superhero_detailview', kwargs={'slug': hero.slug}))
-        
+        user_ = create_test_user_and_login(client=self.client) # first login as an autheticated user
+        user_.user_permissions.add(Permission.objects.get(codename='change_superhero'))
+        response = self.client.post(reverse('superhero_editview', kwargs={'slug': hero.slug}), hero_modifications)   
+        self.assertEqual(response.status_code, 302, msg='edit page should redirect  if correct permissions have been assigned')
         test_hero = Superhero.objects.get(name='Fatman')  # retrieve object from database to test that posting on page can edit 
+        self.assertRedirects(response, expected_url=reverse('superhero_editview', kwargs={'slug': test_hero.slug}))
         self.assertEqual(test_hero.bio, 'Batman, except fat')
 
     def test_post_validation_check(self):
-        #copy_of_test_form_data = dict(TEST_FORM_DATA)   # This has tricked me more than once in the past.. Python doesn't create copies of objects unle$
-        #copy_of_test_form_data['dob'] = 'Invalid'
-        #response = self.client.post(reverse('home_page'), copy_of_test_form_data)
-        #self.assertEqual(response.status_code, 200, msg='If form is invalid, it wont redirect')
-        #self.assertContains(response, 'Enter a valid date.') # Page should have atleast one invalid form message on page
-        self.fail('Finish the test')
-
-    def test_post_blank_fields(self):
-        # this test doesn't actually work for testing the behaviour, simply only tests whether or not one or more fields are marked with the 'required'$
-        #response = self.client.get(reverse('home_page'))
-        #self.assertEqual(response.status_code, 200, msg='Home page should load correctly')
-        #self.assertContains(response, 'required') # Page should have atleast one invalid form message on page
-        self.fail('Finish the test')
+        hero = create_test_superhero(name='Batman')    
+        invalid_data = {
+            'name': '',
+            'bio': '', 
+            'picture': '',  # so far just blank data
+        }
+        user_ = create_test_user_and_login(client=self.client) # first login as an autheticated user
+        user_.user_permissions.add(Permission.objects.get(codename='change_superhero'))
+        response = self.client.post(reverse('superhero_editview', kwargs={'slug': hero.slug}), invalid_data)   
+        self.assertEqual(response.status_code, 200, msg='If form is invalid, it wont redirect')
+        
+    def test_form_has_required_fields(self):
+        # this test doesn't actually work for testing the form validation, simply only tests whether or not one or more fields are marked with the 'required'
+        hero = create_test_superhero(name='Batman')    
+        user_ = create_test_user_and_login(client=self.client) # first login as an autheticated user
+        user_.user_permissions.add(Permission.objects.get(codename='change_superhero'))
+        response = self.client.get(reverse('superhero_editview', kwargs={'slug': hero.slug}))
+        self.assertEqual(response.status_code, 200, msg='edit page should load correctly if correct permissions have been assigned')
+        self.assertContains(response, 'required') # Page should have atleast one invalid form message on page
 
     def test_post_duplicate_data(self):
-        #response = self.client.post(reverse('home_page'), TEST_FORM_DATA) 
-        #self.assertEqual(response.status_code, 302, msg='Should redirect since the form is valid')
-        #response = self.client.post(reverse('home_page'), TEST_FORM_DATA) # attempt to post the same data twice.     
-        #self.assertEqual(response.status_code, 200, msg='If form is invalid, it wont redirect')
-        #self.assertContains(response, 'Customer with this Email already exists.') 
-        self.fail('Finish the test')
-
-    def test_post_data_appears_on_modelForm(self):
-        #cust_data = Customer.objects.create(**TEST_FORM_DATA)    # ** allows us to pass a dictionary through to the create method, so long as the dict $
-        #response = self.client.get(cust_data.get_success_url())
-        #self.assertEqual(response.status_code, 200, msg='thanks page should load 200 OK')
-        #self.assertContains(response, TEST_FORM_DATA['email'])
-        self.fail('Finish the test')
+        hero_one = create_test_superhero(name='Batman')    
+        create_test_superhero(name='Superman')    
+        hero_one_modifications = {
+            'name': 'Superman',
+            'bio': 'Duplicate guy',
+            'picture': 'www.google.com',
+        }
+        user_ = create_test_user_and_login(client=self.client) # first login as an autheticated user
+        user_.user_permissions.add(Permission.objects.get(codename='change_superhero'))
+        response = self.client.post(reverse('superhero_editview', kwargs={'slug': hero_one.slug}), hero_one_modifications)  
+        self.assertContains(response, 'Superhero with this Hero Name already exists.') # Page should have atleast one invalid form message on page
+        
