@@ -1,6 +1,7 @@
 from django.test import TestCase
 from django.urls import reverse
 from .base import create_test_user_and_login, create_test_superhero
+from django.contrib.auth.models import Permission
 
 class ViewTests(TestCase):
     def test_home_page_renders_template(self):
@@ -20,6 +21,14 @@ class ViewTests(TestCase):
         response = self.client.get(reverse('superhero_detailview', kwargs={'slug': hero.slug}))
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'superhero_detailview.html')
+
+    def test_superhero_editView_renders_template(self):
+        hero = create_test_superhero(name='Batman')
+        user_ = create_test_user_and_login(client=self.client) # first login as an autheticated user
+        user_.user_permissions.add(Permission.objects.get(codename='change_superhero')) # ensure they have the correct permissions to view
+        response = self.client.get(reverse('superhero_editview', kwargs={'slug': hero.slug}))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'superhero_editview.html')            
 
     def test_home_page_uses_login_form(self):
         response = self.client.get(reverse('home_page'))
@@ -42,7 +51,31 @@ class ViewTests(TestCase):
         response = self.client.get(reverse('superhero_detailview', kwargs={'slug': hero.slug}))
         self.assertContains(response, hero.name)
 
-    def test_superhero_detailView_redirects_with_edit_permissions(self):
+    def test_superhero_detailview_redirects_to_updateview_with_edit_permissions(self):
         #if you have edit or delete permissions, instead of simply viewing the data, you'll be able to edit the data. The app achieves this by testing for permissions, then redirecting to an edit page if you have the right permissions
-        self.fail('finish this test')
-   
+        hero = create_test_superhero(name='Batman')
+        user_ = create_test_user_and_login(client=self.client) # first login as an autheticated user
+        user_.user_permissions.add(Permission.objects.get(codename='change_superhero'))
+        response = self.client.get(reverse('superhero_detailview', kwargs={'slug': hero.slug}))
+        self.assertRedirects(response, expected_url=reverse('superhero_editview', kwargs={'slug': hero.slug}))
+
+    def test_edit_superhero_page_redirects_if_not_correct_permissions(self):
+        hero = create_test_superhero(name='Batman')
+        create_test_user_and_login(client=self.client) # first login as an autheticated user
+        # deliberately don't create correct permissions
+        response = self.client.get(reverse('superhero_editview', kwargs={'slug': hero.slug}))
+        self.assertEqual(response.status_code, 403) # should be forbidden for such a user
+
+    def test_superhero_editView_has_prepopulated_data(self):
+        hero = create_test_superhero(name='Batman')
+        user_ = create_test_user_and_login(client=self.client) # first login as an autheticated user
+        user_.user_permissions.add(Permission.objects.get(codename='change_superhero'))
+        response = self.client.get(reverse('superhero_editview', kwargs={'slug': hero.slug}))
+        self.assertContains(response, 'Batman')        
+
+    def test_edit_superhero_page_has_form_with_correct_permissions(self):
+        hero = create_test_superhero(name='Batman')
+        user_ = create_test_user_and_login(client=self.client) # first login as an autheticated user
+        user_.user_permissions.add(Permission.objects.get(codename='change_superhero'))
+        response = self.client.get(reverse('superhero_editview', kwargs={'slug': hero.slug}))
+        self.assertContains(response, '<form')

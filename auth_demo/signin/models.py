@@ -3,9 +3,9 @@ from django.urls import reverse
 from django.template.defaultfilters import slugify
 
 class Superhero(models.Model):
-    name = models.CharField(max_length=100, help_text="Hero Name", unique=True)  
-    bio = models.TextField(help_text="Hero Bio")
-    picture = models.URLField(help_text="URL to headshot image")
+    name = models.CharField(max_length=100, verbose_name="Hero Name", unique=True)  
+    bio = models.TextField(verbose_name="Hero Bio")
+    picture = models.URLField(verbose_name="URL to headshot image")
     slug = models.SlugField(unique=True, max_length=120)    
 
     def __str__(self):
@@ -13,6 +13,9 @@ class Superhero(models.Model):
 
     def get_absolute_url(self):
         return reverse('superhero_detailview', args=[self.slug])
+
+    def get_edit_url(self):
+        return reverse('superhero_editview', args=[self.slug])
 
     def create_slug(self, string_to_slug): #slugify is fine, but I prefer underscores
         new_slug = slugify(string_to_slug)

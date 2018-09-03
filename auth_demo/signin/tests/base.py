@@ -7,8 +7,9 @@ def create_test_user(username='test@mctestersonandco.com', password='test1234'):
     return user_
 
 def create_test_user_and_login(client, username='test@mctestersonandco.com', password='test1234'):
-    create_test_user(username=username, password=password)
+    user_ = create_test_user(username=username, password=password)
     client.login(username=username, password=password)
+    return user_
 
 def create_a_test_permission(content_type, codename='test_perm'):
     return Permission.objects.create(

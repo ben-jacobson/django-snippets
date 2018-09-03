@@ -1,9 +1,10 @@
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
-#from django.views.generic import TemplateView
 from django.contrib.auth.views import LoginView
-from django.views.generic import ListView, DetailView
+from django.views.generic import ListView, DetailView, UpdateView, DeleteView
+from django.shortcuts import redirect
 from signin.models import Superhero
+from django.contrib.auth.mixins import PermissionRequiredMixin
 
 class home_page(LoginView):
     template_name = 'home.html'
@@ -21,6 +22,34 @@ class superhero_listView(ListView):
 class superhero_detailView(DetailView):
     template_name = 'superhero_detailview.html'
     model = Superhero
+
+    def dispatch(self, *args, **kwargs):
+        if self.request.user.has_perm('signin.change_superhero'):
+            self.object = self.get_object(queryset=self.queryset) # Because we haven't run the get method, the self.object isn't populated, this generates it for us in case we need it. or can use self.object = super(DetailView, self).get_object(queryset=queryset)
+            return redirect(self.object.get_edit_url())
+        return super().dispatch(*args, **kwargs)
+
+@method_decorator(login_required, name='dispatch')
+class superhero_editView(PermissionRequiredMixin, UpdateView):
+    permission_required = 'signin.change_superhero'
+    template_name = 'superhero_editview.html'
+    model = Superhero    
+    fields = [
+        'name', 
+        'bio',
+        'picture',
+    ]
+
+    #def has_permissions(self):       # you can manually check permission checks this way, although it's cleaner to use a mixin
+    #    #return self.request.user.has_perm('signin.change_superhero') 
+    #    return False  
+
+    def get_success_url(self):      # UpdateView will make use of get_absolute_url, and in this case the model sets this to the view page - in our app it redirects if you have the correct permission, but that's 3 page loads instead of 1. 
+        return self.object.get_edit_url()   # important to note that you can only call the object member after get, since this creates it for us via get_context
+
+@method_decorator(login_required, name='dispatch')
+class superhero_deleteView(DeleteView):
+    pass      
 
 ## Old code that has since been refactored
 '''class home_page(FormView):       # Delete this, once we have something that works

@@ -1,7 +1,8 @@
 from django.test import TestCase
 from django.urls import reverse
 from django.contrib.auth import get_user
-from .base import create_test_user
+from .base import create_test_user, create_test_superhero, create_test_user_and_login
+from signin.models import Superhero
 
 class LoginFormTests(TestCase): 
     def test_post_invalid_username_andor_password(self):
@@ -41,13 +42,27 @@ class LoginFormTests(TestCase):
         self.assertEqual(response.status_code, 200, msg='Home page should load correctly')
         self.assertContains(response, 'required') # Page should have atleast one invalid form message on page
 
+'''class SuperheroForm(ModelForm):     # normally would define this in forms.py, however this is only used for testing. Our production code uses a CreateView which automatically generates the same ModelForm for us 
+    class Meta:
+        model = Superhero
+        fields = '__all__'   '''  
+
 class SuperheroEditTest(TestCase):
     def test_post_page_edits(self):
         # simulates posting the form data to the home page, just like the form would, then asserts that it lands in the database
-        #response = self.client.post(reverse('home_page'), TEST_FORM_DATA)
-        #self.assertEqual(response.status_code, 302, msg='When posting form data, page does not redirect')
-        #self.assertEqual(Customer.objects.last().email, TEST_FORM_DATA['email'])
-        self.fail('Finish the test')
+        hero = create_test_superhero(name='Batman')    
+        hero_modifications = {
+            'name': 'Fatman',
+            'bio': 'Batman, except fat',
+            'picture': 'www.google.com',
+        }
+        create_test_user_and_login(client=self.client) # first login as an autheticated user
+        self.fail('Finish this test - add the correct permissions to the user before attempting to modify')
+        response = self.client.post(reverse('superhero_detailview', kwargs={'slug': hero.slug}), hero_modifications)        
+        self.assertRedirects(response, expected_url=reverse('superhero_detailview', kwargs={'slug': hero.slug}))
+        
+        test_hero = Superhero.objects.get(name='Fatman')  # retrieve object from database to test that posting on page can edit 
+        self.assertEqual(test_hero.bio, 'Batman, except fat')
 
     def test_post_validation_check(self):
         #copy_of_test_form_data = dict(TEST_FORM_DATA)   # This has tricked me more than once in the past.. Python doesn't create copies of objects unle$
