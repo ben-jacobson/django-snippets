@@ -1,6 +1,10 @@
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
+
 from selenium import webdriver
+from selenium.common.exceptions import NoSuchElementException
+
 from signin.tests.base import create_test_user, create_test_superhero
+from django.contrib.auth.models import Permission
 
 MAX_WAIT = 10 # 10 second max wait
 
@@ -23,13 +27,21 @@ class FunctionalTest(StaticLiveServerTestCase):
         self.test_password = 'asdf1234'
 
         # create a test user for all functional tests 
-        create_test_user(username=self.test_username, password=self.test_password)
+        self.test_user = create_test_user(username=self.test_username, password=self.test_password)
 
         # assign permissions for all functional tests
 
     def tearDown(self):
         self.browser.quit()
         super().tearDown()
+
+    def give_edit_permission_to_test_user(self):
+        change_perm = Permission.objects.get(codename='change_superhero')
+        self.test_user.user_permissions.add(change_perm)
+
+    def give_delete_permission_to_test_user(self):
+        change_perm = Permission.objects.get(codename='delete_superhero')
+        self.test_user.user_permissions.add(change_perm)
 
     def visit_test_page_and_signin(self, username=None, password=None):
         if username is None:
@@ -100,39 +112,54 @@ class AuthenticationTests(FunctionalTest):
 
     def test_user_given_edit_perm_can_edit_data(self):
         # start by giving the user the correct permission to edit
+        self.give_edit_permission_to_test_user()
 
         # user visits home page and attempts to log in
         self.visit_test_page_and_signin()
 
         # user clicks on a superhero from the list, knowing that they have the correct permissions to edit the data
+        self.browser.find_element_by_link_text('Batman').click()
 
-        # user notices that instead of seeing the detailView, the user is redirected to a FormView which allows them to edit the page
+        # user notices that instead of seeing the detailView, the user is redirected to an UpdateView which allows them to edit the page
+        name_input = self.browser.find_element_by_id('id_name')
+        self.assertEqual(name_input.get_attribute('value'), 'Batman')
 
         # User makes some modifications to the Superhero
+        name_input.clear()
+        name_input.send_keys('Fatman')
 
         # user then attempts to save the data, pressing the 'save' button
+        self.browser.find_element_by_id('edit-button').click()
 
         # user notices that the data has been edited as per their modification
-        self.fail('finish the test')
+        name_input = self.browser.find_element_by_id('id_name')
+        self.assertEqual(name_input.get_attribute('value'), 'Fatman')
 
     def test_user_given_readonly_cannot_edit_data(self):
-        # user is not given the correct permission to edit
-
-        # user visits home page and attempts to log in
+        # user is not given the correct permission to edit. user visits home page and attempts to log in
         self.visit_test_page_and_signin()
 
         # user clicks on a superhero from the list
+        self.browser.find_element_by_link_text('Batman').click()
 
         # user notices that they are not redirected to the FormView which allows them to edit the page
+        page_header = self.browser.find_element_by_class_name('superhero-detail-page-title')
+        self.assertEqual(page_header.text, "Batman")
+
+        # found the code below works, but is very slow
+        '''try: 
+            self.browser.find_element_by_tag_name('form')
+        except NoSuchElementException:
+            pass
+        else:
+            self.fail('Found form element on detailView where it should not have been')'''
 
         # Frustrated, the user tries to visit the page by going directly to the URL
+        self.browser.get(self.browser.current_url + 'edit/')
 
-        # user is redirected to login page
-
-        # user notices that 'next' field is populated with the superhero edit page
-
-        # user is given a notice that they don't have the correct permissions to edit pages, and given the opportunity to login with a different username 
-        self.fail('finish the test - we may be able to refactor some of the code from "test_user_given_edit_perm_can_edit_data"')  
+        # user is given a 401 forbidden error
+        error_message = self.browser.find_element_by_tag_name('h1')
+        self.assertEqual(error_message.text, '403 Forbidden')
 
     def test_user_given_delete_access_can_delete_data(self):
         self.fail('finish the test')  
