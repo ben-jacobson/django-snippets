@@ -163,7 +163,8 @@ class AuthenticationTests(FunctionalTest):
 
     def test_user_given_delete_access_can_delete_data(self):
         # start by giving the user the correct permission to delete
-        self.give_delete_permission_to_test_user()
+        self.give_edit_permission_to_test_user() # the user needs the edit permission in order to visit the edit page
+        self.give_delete_permission_to_test_user() # then the delete button only appears if the user has the delete permission
 
         # user visits home page and attempts to log in
         self.visit_test_page_and_signin()
@@ -172,14 +173,28 @@ class AuthenticationTests(FunctionalTest):
         self.browser.find_element_by_link_text('Batman').click()
 
         # user notices that instead of seeing the detailView, the user is redirected to an UpdateView which allows them to edit the page and delete the data
-        self.browser.find_element_by_id('delete_button').click()
+        self.browser.find_element_by_id('delete-button').click()
 
         # the page should redirect back to the list page
         heroes = self.browser.find_elements_by_class_name('superhero-name') 
         self.assertNotIn('Batman', heroes)
 
     def test_user_cannot_delete_data_without_correct_permissions(self):
-        self.fail('finish the test')          
+        # user visits home page and attempts to log in
+        self.visit_test_page_and_signin() 
+        
+        # user isn't given an delete permissions, only edit permissions
+        self.give_edit_permission_to_test_user()
+
+        # user clicks on a superhero from the list, knowing that they have the correct permissions to edit the data
+        self.browser.find_element_by_link_text('Batman').click()
+
+        # user can't see the delete button. so instead tries to go directly to the url
+        self.browser.get(self.live_server_url + '/superheroes/batman/delete/')
+
+        # user is given a forbidden message
+        error_message = self.browser.find_element_by_tag_name('h1')
+        self.assertEqual(error_message.text, '403 Forbidden')
 
 class FormValidationTests(FunctionalTest):
     def test_failed_login_attempt_generates_new_csrf(self):

@@ -1,19 +1,6 @@
 Todo:
--Create a modelform for Superhero + appropriate unit tests for this modelform
--instead of messing with incorporating forms into DetailView, if the user has the correct permissions we'll simply redirect them to a similar page that allows them to edit. in order to do this, simply overwrite the Get function to check permissions before calling SUPER()
--for users with 'delete' permissions, incorporate a working 'delete' button both in the listView and the detailView
--create an 'add to database' function + unit/functional tests
 -Look at refactoring our method_decorators + permission checks to instead by mixins
 -Write some code demonstrating how we can create our own mixins - it's just class inheritance..
 
-Functional test ideas:
--test that readonly can only see the data, no edit button or delete button is present
--test that write_access users can see and edit the data, but does not have a delete button
--test that delete_access users can do all of the above
--write other tests that ensure users without correct permissions, cannot do any of the above. 
-
-Unit test ideas:
--create test data using a form without authenticated user, assert it didn't work
--create test data using a form with an authenticated user, assert it worked
 
 

@@ -42,12 +42,17 @@ class superhero_editView(PermissionRequiredMixin, UpdateView):
         'picture',
     ]
 
-    #def has_permissions(self):       # you can manually check permission checks this way, although it's cleaner to use a mixin
-    #    #return self.request.user.has_perm('signin.change_superhero') 
-    #    return False  
+    def get_context_data(self, **kwargs):
+        context_data = super().get_context_data(**kwargs)       # get the usual 'object' context data, so that we can append to it.
+        context_data['user_has_delete_permissions'] = self.request.user.has_perm('signin.delete_superhero')
+        return context_data
 
     def get_success_url(self):      # UpdateView will make use of get_absolute_url, and in this case the model sets this to the view page - in our app it redirects if you have the correct permission, but that's 3 page loads instead of 1. 
         return self.object.get_edit_url()   # important to note that you can only call the object member after get, since this creates it for us via get_context
+
+    #def has_permissions(self):       # you can manually check permission checks this way, although it's cleaner to use a mixin
+    #    #return self.request.user.has_perm('signin.change_superhero') 
+    #    return False  
 
 @method_decorator(login_required, name='dispatch')
 class superhero_deleteView(PermissionRequiredMixin, DeleteView):

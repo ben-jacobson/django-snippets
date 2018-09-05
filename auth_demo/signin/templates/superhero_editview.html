@@ -23,4 +23,11 @@
     {{ form.as_p }}
     <input id="edit-button" type="submit" value="Edit" />
 </form>
+
+    {% if user_has_delete_permissions %}
+        <form action="{% url 'superhero_deleteview' object.slug %}" method="post">
+            {% csrf_token %}
+            <input id="delete-button" type="submit" value="Delete" / >
+        </form>
+    {% endif %}
 {% endblock %}

@@ -82,6 +82,9 @@ class ViewTests(TestCase):
         self.assertContains(response, '<form')
 
     def test_superhero_delete_view(self):
+        # since these permissions aren't coupled to eachother, theoretically you could have 'delete' permissions 
+        # without 'edit' permissions. This app doesn't allow you to press any delete buttons without the 'change' 
+        # permission, but they should just be able to go directly to the url and successfully delete an instance
         user_ = create_test_user_and_login(client=self.client) # first login as an autheticated user
         user_.user_permissions.add(Permission.objects.get(codename='delete_superhero'))
 
@@ -105,4 +108,17 @@ class ViewTests(TestCase):
         superheroes_in_db = Superhero.objects.all()
         self.assertEqual(superheroes, [hero for hero in superheroes_in_db])  # compare new popped list with what we just re-read from database
         
+    def test_delete_button_appears_on_page_with_delete_permissions(self):
+        hero = create_test_superhero(name='Batman')
+        user_ = create_test_user_and_login(client=self.client) # first login as an autheticated user
+        user_.user_permissions.add(Permission.objects.get(codename='change_superhero')) # only add change permission so as to get access to page, but don't add delete permission
+        user_.user_permissions.add(Permission.objects.get(codename='delete_superhero')) # now add the delete permission
+        response = self.client.get(reverse('superhero_editview', kwargs={'slug': hero.slug}))
+        self.assertContains(response, 'delete-button')
 
+    def test_delete_button_doesnt_appear_on_page_without_delete_permissions(self):
+        hero = create_test_superhero(name='Batman')
+        user_ = create_test_user_and_login(client=self.client) # first login as an autheticated user
+        user_.user_permissions.add(Permission.objects.get(codename='change_superhero')) # only add change permission so as to get access to page, but don't add delete permission
+        response = self.client.get(reverse('superhero_editview', kwargs={'slug': hero.slug}))
+        self.assertNotContains(response, 'delete-button')
