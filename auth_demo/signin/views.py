@@ -1,26 +1,29 @@
-from django.contrib.auth.decorators import login_required
-from django.utils.decorators import method_decorator
+#from django.contrib.auth.decorators import login_required
+#from django.utils.decorators import method_decorator
 from django.contrib.auth.views import LoginView
 from django.views.generic import ListView, DetailView, UpdateView, DeleteView
 from django.shortcuts import redirect
 from signin.models import Superhero
-from django.contrib.auth.mixins import PermissionRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.urls import reverse
 
 class home_page(LoginView):
     template_name = 'home.html'
 
-# there are a couple of ways of requiring logins for pages, this is the raw way. With this method decorator, it relies on some settings within Settings.py - see comments near LOGIN_URL
-@method_decorator(login_required, name='dispatch')       #  see below for alternative ways to do this. 
-class superhero_listView(ListView):  
+#Commented out ar the method_decorators for login required, they've since been refactored to use a mixin.
+
+#@method_decorator(login_required, name='dispatch')       #  see below for alternative ways to do this. 
+class superhero_listView(LoginRequiredMixin, ListView):  
+    #login_url = '/login/'      # these can be customized, or you could specify them in settings.py
+    #redirect_field_name = 'redirect_to'
     template_name = 'superhero_listview.html'  
     context_object_name = 'superhero_list'
 
     def get_queryset(self):
         return Superhero.objects.all()
 
-@method_decorator(login_required, name='dispatch')   # you can even specify - permission_required=
-class superhero_detailView(DetailView):
+#@method_decorator(login_required, name='dispatch')   # you can even specify - permission_required=
+class superhero_detailView(LoginRequiredMixin, DetailView):
     template_name = 'superhero_detailview.html'
     model = Superhero
 
@@ -30,8 +33,8 @@ class superhero_detailView(DetailView):
             return redirect(self.object.get_edit_url())
         return super().dispatch(*args, **kwargs)
 
-@method_decorator(login_required, name='dispatch')
-class superhero_editView(PermissionRequiredMixin, UpdateView):
+#@method_decorator(login_required, name='dispatch')
+class superhero_editView(PermissionRequiredMixin, UpdateView):  # when using PermissionRequiredMixin, you don't need to use the LoginRequiredMixin as well
     permission_required = 'signin.change_superhero'
 
     template_name = 'superhero_editview.html'
@@ -54,7 +57,7 @@ class superhero_editView(PermissionRequiredMixin, UpdateView):
     #    #return self.request.user.has_perm('signin.change_superhero') 
     #    return False  
 
-@method_decorator(login_required, name='dispatch')
+#@method_decorator(login_required, name='dispatch')
 class superhero_deleteView(PermissionRequiredMixin, DeleteView):
     model = Superhero
     permission_required = 'signin.delete_superhero'
