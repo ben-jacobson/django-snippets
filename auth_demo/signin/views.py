@@ -10,7 +10,7 @@ from django.urls import reverse
 class home_page(LoginView):
     template_name = 'home.html'
 
-#Commented out ar the method_decorators for login required, they've since been refactored to use a mixin.
+#Commented out ar the login_required method_decorators, they've since been refactored to use mixins instead.
 
 #@method_decorator(login_required, name='dispatch')       #  see below for alternative ways to do this. 
 class superhero_listView(LoginRequiredMixin, ListView):  
@@ -65,6 +65,16 @@ class superhero_deleteView(PermissionRequiredMixin, DeleteView):
 
     def get_success_url(self):
         return reverse('superhero_listview')
+
+
+# see below, this code doesn't do anything at present, but demonstrates how you can create your own mixins
+
+class my_own_mixin(PermissionRequiredMixin):
+    some_extra_data = "hello world"
+    permission_required = 'signin.edit_superhero'
+
+class make_use_of_mixin(my_own_mixin, ListView):
+    pass
 
 ## Old code that has since been refactored
 '''class home_page(FormView):       # Delete this, once we have something that works

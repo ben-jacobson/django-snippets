@@ -1,5 +1,4 @@
 Todo:
--Look at refactoring our method_decorators + permission checks to instead by mixins
 -Write some code demonstrating how we can create our own mixins - it's just class inheritance..
 -Create a logout button
 
