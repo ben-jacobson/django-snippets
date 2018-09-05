@@ -5,6 +5,7 @@ from django.views.generic import ListView, DetailView, UpdateView, DeleteView
 from django.shortcuts import redirect
 from signin.models import Superhero
 from django.contrib.auth.mixins import PermissionRequiredMixin
+from django.urls import reverse
 
 class home_page(LoginView):
     template_name = 'home.html'
@@ -32,6 +33,7 @@ class superhero_detailView(DetailView):
 @method_decorator(login_required, name='dispatch')
 class superhero_editView(PermissionRequiredMixin, UpdateView):
     permission_required = 'signin.change_superhero'
+
     template_name = 'superhero_editview.html'
     model = Superhero    
     fields = [
@@ -48,8 +50,13 @@ class superhero_editView(PermissionRequiredMixin, UpdateView):
         return self.object.get_edit_url()   # important to note that you can only call the object member after get, since this creates it for us via get_context
 
 @method_decorator(login_required, name='dispatch')
-class superhero_deleteView(DeleteView):
-    pass      
+class superhero_deleteView(PermissionRequiredMixin, DeleteView):
+    model = Superhero
+    permission_required = 'signin.delete_superhero'
+    template_name = 'superhero_deleteview.html'
+
+    def get_success_url(self):
+        return reverse('superhero_listview')
 
 ## Old code that has since been refactored
 '''class home_page(FormView):       # Delete this, once we have something that works

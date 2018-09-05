@@ -1,7 +1,7 @@
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 
 from selenium import webdriver
-from selenium.common.exceptions import NoSuchElementException
+#from selenium.common.exceptions import NoSuchElementException
 
 from signin.tests.base import create_test_user, create_test_superhero
 from django.contrib.auth.models import Permission
@@ -162,7 +162,21 @@ class AuthenticationTests(FunctionalTest):
         self.assertEqual(error_message.text, '403 Forbidden')
 
     def test_user_given_delete_access_can_delete_data(self):
-        self.fail('finish the test')  
+        # start by giving the user the correct permission to delete
+        self.give_delete_permission_to_test_user()
+
+        # user visits home page and attempts to log in
+        self.visit_test_page_and_signin()
+
+        # user clicks on a superhero from the list, knowing that they have the correct permissions to edit the data
+        self.browser.find_element_by_link_text('Batman').click()
+
+        # user notices that instead of seeing the detailView, the user is redirected to an UpdateView which allows them to edit the page and delete the data
+        self.browser.find_element_by_id('delete_button').click()
+
+        # the page should redirect back to the list page
+        heroes = self.browser.find_elements_by_class_name('superhero-name') 
+        self.assertNotIn('Batman', heroes)
 
     def test_user_cannot_delete_data_without_correct_permissions(self):
         self.fail('finish the test')          
@@ -183,4 +197,3 @@ class FormValidationTests(FunctionalTest):
         self.visit_test_page_and_enter_incorrect_login()
         login_errors = self.browser.find_elements_by_css_selector('.login-error')       # using a css selector cause the error messages may appear as list items, or p tags
         self.assertGreater(len(login_errors), 0, msg='there should be at least one error message on page')
-        self.fail('finish this test - need to verify specific errors')

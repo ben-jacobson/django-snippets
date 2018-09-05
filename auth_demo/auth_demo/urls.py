@@ -26,7 +26,7 @@ urlpatterns = [
     path('superheroes/', views.superhero_listView.as_view(), name="superhero_listview"),
     path('superheroes/<slug:slug>/', views.superhero_detailView.as_view(), name="superhero_detailview"),
     path('superheroes/<slug:slug>/edit/', views.superhero_editView.as_view(), name="superhero_editview"),
-    path('superheroes/<slug:slug>/delete/', views.superhero_editView.as_view(), name="superhero_deleteview"),
+    path('superheroes/<slug:slug>/delete/', views.superhero_deleteView.as_view(), name="superhero_deleteview"),
 
 ]
 

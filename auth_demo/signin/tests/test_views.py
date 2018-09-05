@@ -2,6 +2,7 @@ from django.test import TestCase
 from django.urls import reverse
 from .base import create_test_user_and_login, create_test_superhero
 from django.contrib.auth.models import Permission
+from signin.models import Superhero
 
 class ViewTests(TestCase):
     def test_home_page_renders_template(self):
@@ -79,3 +80,29 @@ class ViewTests(TestCase):
         user_.user_permissions.add(Permission.objects.get(codename='change_superhero'))
         response = self.client.get(reverse('superhero_editview', kwargs={'slug': hero.slug}))
         self.assertContains(response, '<form')
+
+    def test_superhero_delete_view(self):
+        user_ = create_test_user_and_login(client=self.client) # first login as an autheticated user
+        user_.user_permissions.add(Permission.objects.get(codename='delete_superhero'))
+
+        superheroes = []
+        superheroes.append(create_test_superhero(name='Batman'))
+        superheroes.append(create_test_superhero(name='Spiderman'))
+        superheroes.append(create_test_superhero(name='Superman'))
+        
+        superheroes_in_db = Superhero.objects.all()
+        self.assertEqual(superheroes, [hero for hero in superheroes_in_db]) 
+
+        slug_of_hero_to_delete = superheroes[-1].slug
+        superheroes.pop()    
+         
+        get_response = self.client.get(reverse('superhero_deleteview', kwargs={'slug': slug_of_hero_to_delete}), follow=True) # follow=True allows the page to redirect and update the response accordingly
+        self.assertContains(get_response, 'Are you sure you want to delete')
+
+        post_response = self.client.post(reverse('superhero_deleteview', kwargs={'slug': slug_of_hero_to_delete}), follow=True)
+        self.assertRedirects(post_response, reverse('superhero_listview'))   
+
+        superheroes_in_db = Superhero.objects.all()
+        self.assertEqual(superheroes, [hero for hero in superheroes_in_db])  # compare new popped list with what we just re-read from database
+        
+
