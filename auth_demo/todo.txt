@@ -1,6 +1,4 @@
 Todo:
--Create a logout button and test it
--Discovered that is_authenticated is always True, need to refactor for all tests that use it to tell whether or not the user is logged in or not. 
 
 
 

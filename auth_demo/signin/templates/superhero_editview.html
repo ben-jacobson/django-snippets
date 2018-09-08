@@ -25,7 +25,7 @@
 </form>
 
     {% if user_has_delete_permissions %}
-        <form action="{% url 'superhero_deleteview' object.slug %}" method="post">
+        <form action="{% url 'superhero_deleteview' object.slug %}" method="GET">
             {% csrf_token %}
             <input id="delete-button" type="submit" value="Delete" / >
         </form>

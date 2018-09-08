@@ -6,6 +6,8 @@ from selenium import webdriver
 from signin.tests.base import create_test_user, create_test_superhero
 from django.contrib.auth.models import Permission
 
+from re import search
+
 MAX_WAIT = 10 # 10 second max wait
 
 class FunctionalTest(StaticLiveServerTestCase):
@@ -57,6 +59,15 @@ class FunctionalTest(StaticLiveServerTestCase):
     def visit_test_page_and_enter_incorrect_login(self, username='wrong@user.com', password='wrong password'):
         self.visit_test_page_and_signin(username, password)   # just a simple wrapper to aid in code readability
 
+    def check_if_page_source_contains_string(self, string_to_search):
+        needle = r'' + string_to_search 
+        page_source = self.browser.page_source
+        
+        if search(needle, page_source) is not None:
+            return True
+        else:
+            return False
+
 class LayoutAndStylingTest(FunctionalTest):
     def test_signin_page_form(self):
         # user visits home page and sees a signin page
@@ -96,6 +107,34 @@ class AuthenticationTests(FunctionalTest):
         # but notices that they are not able to see this without login, after a few seconds they are redirected to a login page
         self.assertEqual(self.browser.title, self.home_page_title, msg='Accessing the page without logging in should have redirected to home page. May need to tweak wait times before this assert')
 
+    def test_user_can_logout(self):
+        # user visits home page and attempts to log in        
+        self.visit_test_page_and_signin()
+
+        # user does a few things, then clicks 'logout'
+        self.browser.find_element_by_id('logout-button').click()
+
+        # after clicking logout, the user should be redirected to the home page
+        title = self.browser.find_element_by_tag_name('h1')
+        self.assertEquals(title.text, 'Login to Superhero Database')
+
+    def test_logout_button_only_appears_when_signed_in(self):
+        # user visits the home page for the first time. Since they are not logged in, they shouldn't see a 'logout' button
+        self.browser.get(self.live_server_url + '/superheroes')
+        self.assertFalse(self.check_if_page_source_contains_string('Logout'))
+        
+        # user then logs in, is redirected to superhero list view and sees the login button       
+        self.visit_test_page_and_signin()
+        self.assertTrue(self.check_if_page_source_contains_string('Logout'))
+ 
+        # user manually goes back to home page to see if logout button exists there too
+        self.browser.get(self.live_server_url + '/superheroes')
+        self.assertTrue(self.check_if_page_source_contains_string('Logout'))
+
+        # user does a few things, then clicks 'logout'. after being redirected to home page, user finds that the logout button has disappeared once again. 
+        self.browser.find_element_by_id('logout-button').click()
+        self.assertFalse(self.check_if_page_source_contains_string('Logout'))
+  
     def test_user_can_login_and_see_test_data(self):
         # user visits home page and attempts to log in
         self.visit_test_page_and_signin()
@@ -175,9 +214,13 @@ class AuthenticationTests(FunctionalTest):
         # user notices that instead of seeing the detailView, the user is redirected to an UpdateView which allows them to edit the page and delete the data
         self.browser.find_element_by_id('delete-button').click()
 
-        # the page should redirect back to the list page
-        heroes = self.browser.find_elements_by_class_name('superhero-name') 
-        self.assertNotIn('Batman', heroes)
+        # the page should redirect to a confirmation page
+        self.assertTrue(self.check_if_page_source_contains_string('Are you sure you want to delete "Batman"?'))
+        self.browser.find_element_by_id('confirm-delete').click()
+
+        # user should be redirected to superhero list page and batman should now be deleted
+        self.assertEqual(self.browser.find_element_by_class_name('page-title').text, 'Superhero Database')
+        self.assertFalse(self.check_if_page_source_contains_string('Batman'))
 
     def test_user_cannot_delete_data_without_correct_permissions(self):
         # user visits home page and attempts to log in
