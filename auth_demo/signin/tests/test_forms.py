@@ -15,7 +15,7 @@ class LoginFormTests(TestCase):
             'password': 'asdf1234',
         }        
         response = self.client.post(reverse('home_page'), test_login_data)
-        #self.asserFalse(user_.is_authenticated) 
+        self.assertNotIn('_auth_user_id', self.client.session)  #self.asserFalse(user_.is_authenticated) 
         self.assertEqual(response.status_code, 200, msg='If form is invalid, it shouldnt redirect')
         self.assertContains(response, 'login-error') # Page should have atleast one invalid form message on page
 
@@ -25,10 +25,12 @@ class LoginFormTests(TestCase):
         user_ = create_test_user(username=username, password=password)
         response = self.client.post(reverse('home_page'), {'username': username, 'password': password}) # do we need to use double stars?
         user_ = get_user(self.client)
-        self.assertTrue(user_.is_authenticated, msg='Posting login details to home page should authenticate user')
-
         # page will now redirect to superhero listview
         self.assertRedirects(response, expected_url=reverse('superhero_listview')) # redirection happens too early for this test to pass. Instead we'll just make sure we're on the right page based on it's template
+
+        # make assertions that the user is logged in
+        self.assertIn('_auth_user_id', self.client.session)  #self.assertTrue(user_.is_authenticated, msg='Posting login details to home page should authenticate user')
+        self.assertEqual(response.wsgi_request.user, user_)
 
         try:
             self.client.logout()
@@ -36,7 +38,7 @@ class LoginFormTests(TestCase):
             self.fail('Could not log out, unsure why')
         finally:
             user_ = get_user(self.client)  # need to read the state of the object once more cause caching
-            self.assertFalse(user_.is_authenticated, msg='User should now be logged out')
+            self.assertNotIn('_auth_user_id', self.client.session)   #self.assertFalse(user_.is_authenticated, msg='User should now be logged out')
 
     def test_form_sets_required_fields_as(self):
         response = self.client.get(reverse('home_page'))

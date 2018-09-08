@@ -122,3 +122,24 @@ class ViewTests(TestCase):
         user_.user_permissions.add(Permission.objects.get(codename='change_superhero')) # only add change permission so as to get access to page, but don't add delete permission
         response = self.client.get(reverse('superhero_editview', kwargs={'slug': hero.slug}))
         self.assertNotContains(response, 'delete-button')
+
+    def test_logout_view(self):
+        username = 'test@mctestersonandcom.com'
+        user_ = create_test_user_and_login(client=self.client, username=username) # first login as an autheticated user
+        response = self.client.get(reverse('superhero_listview'))
+
+        # 4 ways to validate a user is logged in
+        self.assertEqual(response.context['user'], user_)
+        self.assertEqual(response.wsgi_request.user, user_)
+        self.assertIn('_auth_user_id', self.client.session)
+        self.assertEqual(self.client.session['_auth_user_id'], '1')   
+
+        # now log out     
+        response = self.client.get(reverse('log_out'))
+        self.assertRedirects(response, expected_url=reverse('home_page'))
+        
+        # With our particular app, we can use these methods to check that the user is logged out, but these may not pass in other apps. Some experimentation will be required
+        self.assertIsNone(response.context)  # you can access the context of the response here, you can use this to view additional data passed by the view. This isn't a reliable way to check that the user isn't logged in. But if they were, you'd have some context data. I.e this could fail with other modifications made to the view
+        self.assertNotIn('_auth_user_id', self.client.session)  
+        self.assertNotEqual(response.wsgi_request.user, user_)
+

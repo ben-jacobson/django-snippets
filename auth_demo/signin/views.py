@@ -1,6 +1,7 @@
 #from django.contrib.auth.decorators import login_required
 #from django.utils.decorators import method_decorator
 from django.contrib.auth.views import LoginView
+from django.contrib.auth import logout
 from django.views.generic import ListView, DetailView, UpdateView, DeleteView
 from django.shortcuts import redirect
 from signin.models import Superhero
@@ -66,6 +67,9 @@ class superhero_deleteView(PermissionRequiredMixin, DeleteView):
     def get_success_url(self):
         return reverse('superhero_listview')
 
+def logout_view(request):
+    logout(request)
+    return redirect(reverse('home_page')) 
 
 # see below, this code doesn't do anything at present, but demonstrates how you can create your own mixins
 
@@ -107,7 +111,7 @@ class make_use_of_mixin(my_own_mixin, ListView):
 
 
 '''def superhero_listView(request):
-    if not request.user.is_authenticated:
+    if not request.user.is_authenticated:       # after refactoring, found that this doesn't work. Pretty much user.is_authenticated (used outside of the template system) returns true at all times - https://stackoverflow.com/questions/31048846/is-authenticated-returns-true-for-logged-out-user
         #return redirect('%s?next=%s' % (settings.LOGIN_URL, request.path))
         return redirect('/')
     else:
