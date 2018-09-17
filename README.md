@@ -1,6 +1,8 @@
 # django-snippets
 Code snippets for use in future Django projects
 
+Requirements - Python 3.6, then run "pip install -r requirements.txt" for all others
+
 August 2018 - Ben Jacobson
 
 In this repo are various code snippets for reuse in future Django projects. These mini projects were really helpful to me in learning Django.
