@@ -1,21 +1,15 @@
-"""tutorial URL Configuration
+from django.conf.urls import url, include
+from rest_framework import routers
+from tutorial.quickstart import views
 
-The `urlpatterns` list routes URLs to views. For more information please see:
-    https://docs.djangoproject.com/en/2.1/topics/http/urls/
-Examples:
-Function views
-    1. Add an import:  from my_app import views
-    2. Add a URL to urlpatterns:  path('', views.home, name='home')
-Class-based views
-    1. Add an import:  from other_app.views import Home
-    2. Add a URL to urlpatterns:  path('', Home.as_view(), name='home')
-Including another URLconf
-    1. Import the include() function: from django.urls import include, path
-    2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
-"""
-from django.contrib import admin
-from django.urls import path
+# I suppose with Django REST, the routers work in a similar way to MVC controllers eg backbone? 
+
+router = routers.DefaultRouter()
+router.register(r'users', views.UserViewSet)      # the regular expression here is called a prefix. The second argument is hte viewset class
+router.register(r'accounts', views.GroupViewSet)
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    url(r'^', include(router.urls)),        # with include, you may append with namespace='instance_name' if you need 
+    url(r'^api-path', include('rest_framework.urls', namespace='rest_framework'))
 ]
+
